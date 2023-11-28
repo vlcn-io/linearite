@@ -6,7 +6,7 @@ import { Menu } from './menu'
 import { PriorityOptions, PriorityType, StatusOptions, StatusType } from '../../types/issue'
 // import { querySQL, sql } from '@livestore/livestore'
 // import { useQuery, useStore } from '@livestore/livestore/react'
-import { FilterState } from '../../domain/schema'
+import { FilterState } from '../../domain/Schema'
 
 interface Props {
   id: string

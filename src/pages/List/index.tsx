@@ -3,7 +3,7 @@ import IssueList from './IssueList'
 import { Issue } from '../../types'
 // import { querySQL, sql } from '@livestore/livestore'
 // import { useQuery } from '@livestore/livestore/react'
-import { AppState } from '../../domain/schema'
+import { AppState } from '../../domain/Schema'
 import { filterStateToOrder, filterStateToWhere } from '../../utils/filterState'
 
 // const filterClause$ = querySQL<AppState>(`select * from app_state WHERE key = 'filter_state';`)

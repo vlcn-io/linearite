@@ -1,11 +1,4 @@
-import { SchemaType } from './SchemaType.js'
-// import { DbSchema, makeSchema, sql } from '@livestore/livestore'
-import { PriorityType, StatusType } from '../types/issue.js'
-import { schema } from '@vlcn.io/typed-sql'
 
-export const SchemaName = 'schema.sql'
-
-export const Schema = schema<SchemaType>`
 CREATE TABLE IF NOT EXISTS issue (
   "id" TEXT PRIMARY KEY NOT NULL,
   "title" TEXT DEFAULT '',
@@ -39,12 +32,3 @@ CREATE TABLE IF NOT EXISTS "filter_state" (
   "priority" '"none" | "urgent" | "high" | "low" | "medium"',
   "query" TEXT
 );
-`
-
-export interface FilterState {
-  orderBy: string
-  orderDirection: 'asc' | 'desc'
-  status?: StatusType[]
-  priority?: PriorityType[]
-  query?: string
-}

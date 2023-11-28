@@ -2,15 +2,18 @@
 // import { WebWorkerStorage } from '@livestore/livestore/storage/web-worker'
 // import { schema } from './domain/schema'
 import App from './App'
+import { DBProvider } from "@vlcn.io/react";
+import schemaContent from "./domain/schema.sql?raw";
+import { SchemaName } from './domain/Schema';
 
 export default function Root() {
   return (
-    // <LiveStoreProvider
-    //   schema={schema}
-    //   loadStorage={() => WebWorkerStorage.load({ fileName: 'app.db', type: 'opfs' })}
-    //   fallback={<div>Loading...</div>}
-    // >
-      <App />
-    // </LiveStoreProvider>
-  )
+    <DBProvider
+    dbname="linear"
+    schema={{
+      name: SchemaName,
+      content: schemaContent,
+    }}
+    Render={() => <App />}
+  />)
 }

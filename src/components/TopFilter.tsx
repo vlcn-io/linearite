@@ -8,7 +8,7 @@ import { PriorityDisplay, StatusDisplay } from '../types/issue'
 import { Issue } from '../types'
 // import { querySQL, sql } from '@livestore/livestore'
 // import { useQuery, useStore } from '@livestore/livestore/react'
-import { FilterState } from '../domain/schema'
+import { FilterState } from '../domain/Schema'
 
 interface Props {
   issues: readonly Issue[]

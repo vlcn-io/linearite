@@ -2,7 +2,7 @@ import TopFilter from '../../components/TopFilter'
 import IssueBoard from './IssueBoard'
 import { Issue } from '../../types'
 import { filterStateToWhere } from '../../utils/filterState'
-import { AppState } from '../../domain/schema'
+import { AppState } from '../../domain/Schema'
 // import { querySQL, sql } from '@livestore/livestore'
 // import { useQuery } from '@livestore/livestore/react'
 
