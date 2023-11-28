@@ -3,6 +3,7 @@ import { memo, useEffect, useRef, useState } from 'react'
 import { BsChevronRight as ChevronRight } from 'react-icons/bs'
 import { ReactComponent as CloseIcon } from '../assets/icons/close.svg'
 import { ReactComponent as LivestoreIcon } from '../assets/images/icon.inverse.svg'
+import { generateKeyBetween } from 'fractional-indexing'
 
 import Modal from '../components/Modal'
 import Editor from '../components/editor/Editor'
@@ -13,7 +14,8 @@ import StatusMenu from './contextmenu/StatusMenu'
 
 import { Priority, Status, PriorityDisplay, StatusType, PriorityType } from '../types/issue'
 import { showInfo, showWarning } from '../utils/notification'
-// import { Issue } from '../types'
+// import { useStore } from '@livestore/livestore/react'
+import { nanoid } from 'nanoid'
 
 interface Props {
   isOpen: boolean
@@ -27,7 +29,7 @@ function IssueModal({ isOpen, onDismiss }: Props) {
   const [description, setDescription] = useState<string>()
   const [priority, setPriority] = useState<PriorityType>(Priority.NONE)
   const [status, setStatus] = useState<StatusType>(Status.BACKLOG)
-  // const { db } = useElectric()!
+  // const { store } = useStore()
 
   const handleSubmit = async () => {
     if (title === '') {
@@ -35,28 +37,25 @@ function IssueModal({ isOpen, onDismiss }: Props) {
       return
     }
 
-    // const lastIssue = await db.issue.findFirst({
-    //   orderBy: {
-    //     kanbanorder: 'desc',
-    //   },
-    // })
-    // const lastIssue: Issue = {}
+    // const lastIssue = store.select(`SELECT kanbanorder FROM issue ORDER BY kanbanorder DESC LIMIT 1`)[0]
     // const kanbanorder = generateKeyBetween(lastIssue?.kanbanorder, null)
-    // const kanbanorder = 'aa'
+    const kanbanorder = 'aa';
 
-    // const date = new Date()
-    // db.issue.create({
-    //   data: {
-    //     id: uuidv4(),
-    //     title: title,
-    //     username: 'testuser',
-    //     priority: priority,
-    //     status: status,
-    //     description: description ?? '',
-    //     modified: date,
-    //     created: date,
-    //     kanbanorder: kanbanorder,
-    //   },
+    const date = Date.now()
+    const id = nanoid()
+    // store.applyEvent('createIssue', {
+    //   id,
+    //   title: title,
+    //   username: 'testuser',
+    //   priority: priority,
+    //   status: status,
+    //   modified: date,
+    //   created: date,
+    //   kanbanorder,
+    // })
+    // store.applyEvent('createDescription', {
+    //   id,
+    //   body: description ?? '',
     // })
 
     if (onDismiss) onDismiss()

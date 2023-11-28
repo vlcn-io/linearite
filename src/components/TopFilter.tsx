@@ -1,42 +1,52 @@
 import { ReactComponent as MenuIcon } from '../assets/icons/menu.svg'
 import { useState, useContext } from 'react'
 import { BsSortUp, BsPlus, BsX, BsSearch as SearchIcon } from 'react-icons/bs'
-import debounce from 'lodash.debounce'
 import ViewOptionMenu from './ViewOptionMenu'
 import { MenuContext } from '../App'
 import FilterMenu from './contextmenu/FilterMenu'
-import { useFilterState } from '../utils/filterState'
 import { PriorityDisplay, StatusDisplay } from '../types/issue'
 import { Issue } from '../types'
+// import { querySQL, sql } from '@livestore/livestore'
+// import { useQuery, useStore } from '@livestore/livestore/react'
+import { FilterState } from '../domain/schema'
 
 interface Props {
-  issues: Issue[]
+  issues: readonly Issue[]
   hideSort?: boolean
   showSearch?: boolean
   title?: string
 }
 
+// const issueCount$ = querySQL<{ c: number }>((_) => sql`SELECT COUNT(id) AS c FROM issue`)
+//   .getFirstRow()
+//   .pipe((row) => row?.c ?? 0)
+// const filterState$ = querySQL<{ value: string }>((_) => sql`SELECT * FROM app_state WHERE "key" = 'filter_state'`)
+//   .getFirstRow({
+//     defaultValue: { value: '{}' },
+//   })
+//   .pipe<FilterState>((row) => JSON.parse(row.value))
+
 export default function TopFilter({ issues, hideSort, showSearch, title = 'All issues' }: Props) {
-  // const { db } = useElectric()!
-  const [filterState, setFilterState] = useFilterState()
   const [showViewOption, setShowViewOption] = useState(false)
   const { showMenu, setShowMenu } = useContext(MenuContext)!
   const [searchQuery, setSearchQuery] = useState('')
-
-  // We don't yet have a DAL for counts, so we use raw SQL
-  // const totalIssuesCount: number =
-  //   useLiveQuery(db.liveRaw({ sql: 'SELECT COUNT(*) FROM issue' }))
-  //     .results?.[0]?.['COUNT(*)'] ?? 0
+  // const totalIssuesCount = useQuery(issueCount$)
+  // const filterState = useQuery(filterState$)
+  // const { store } = useStore()
+  const filterState = {} as FilterState
   const totalIssuesCount = 0
 
   const filteredIssuesCount = issues.length
 
-  const handleSearchInner = debounce((query: string) => {
-    setFilterState({
-      ...filterState,
-      query: query,
-    })
-  }, 500)
+  const handleSearchInner = (query: string) => {
+    // store.applyEvent('upsertAppAtom', {
+    //   key: 'filter_state',
+    //   value: JSON.stringify({
+    //     ...filterState,
+    //     query: query,
+    //   }),
+    // })
+  }
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
@@ -66,7 +76,6 @@ export default function TopFilter({ issues, hideSort, showSearch, title = 'All i
           </button>
 
           <div className="p-1 font-semibold me-1">{title}</div>
-          {/* <span>{filteredIssuesCount}</span> */}
           <span>
             {filteredIssuesCount}
             {filteredIssuesCount !== totalIssuesCount ? ` of ${totalIssuesCount}` : ''}
@@ -102,10 +111,13 @@ export default function TopFilter({ issues, hideSort, showSearch, title = 'All i
               <span
                 className="px-1 bg-gray-300 rounded-r cursor-pointer flex items-center"
                 onClick={() => {
-                  setFilterState({
-                    ...filterState,
-                    priority: undefined,
-                  })
+                  // store.applyEvent('upsertAppAtom', {
+                  //   key: 'filter_state',
+                  //   value: JSON.stringify({
+                  //     ...filterState,
+                  //     priority: undefined,
+                  //   }),
+                  // })
                 }}
               >
                 <BsX size={16} />
@@ -121,10 +133,13 @@ export default function TopFilter({ issues, hideSort, showSearch, title = 'All i
               <span
                 className="px-1 bg-gray-300 rounded-r cursor-pointer flex items-center"
                 onClick={() => {
-                  setFilterState({
-                    ...filterState,
-                    status: undefined,
-                  })
+                  // store.applyEvent('upsertAppAtom', {
+                  //   key: 'filter_state',
+                  //   value: JSON.stringify({
+                  //     ...filterState,
+                  //     status: undefined,
+                  //   }),
+                  // })
                 }}
               >
                 <BsX size={16} />
