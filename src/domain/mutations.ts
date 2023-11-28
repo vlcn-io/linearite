@@ -1,7 +1,16 @@
-import { DBAsync, TXAsync } from "@vlcn.io/xplat-api";
+import { DBAsync, TXAsync } from "@vlcn.io/xplat-api"
+import { Issue, Description } from "./SchemaType"
 
 export const mutations = {
-  createIssue(tx: TXAsync) {
+  createIssue(tx: TXAsync, issue: Issue) {
+    // TODO: have template literals inject bind params
+    return tx.exec(
+      `INSERT INTO issue ("id", "title", "priority", "status", "created", "modified", "kanbanorder")
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [issue.id, issue.title, issue.priority, issue.status, issue.created, issue.modified, issue.kanbanorder]);
+  },
+
+  createDescription(tx: TXAsync, desc: Description) {
 
   }
 };

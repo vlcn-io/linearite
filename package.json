@@ -27,6 +27,7 @@
     "@tiptap/react": "^2.1.8",
     "@tiptap/starter-kit": "^2.1.8",
     "@vlcn.io/crsqlite-wasm": "0.16.0-next.0",
+    "@vlcn.io/id": "^0.0.3",
     "@vlcn.io/react": "3.1.0-next.0",
     "@vlcn.io/typed-sql": "link:../typed-sql/packages/typed-sql",
     "@vlcn.io/xplat-api": "^0.14.1",

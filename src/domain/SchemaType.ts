@@ -1,3 +1,5 @@
+import { ID_of } from '@vlcn.io/id'
+
 export type Issue = SchemaType['issue']
 export type Description = SchemaType['description']
 export type Comment = SchemaType['comment']
@@ -6,7 +8,7 @@ export type FilterState = SchemaType['filter_state']
 // === custom code above this line ===
 export type SchemaType = {
   readonly issue: Readonly<{
-    id: string
+    id: ID_of<Issue>
     title: string | null
     creator: string | null
     priority: 'none' | 'urgent' | 'high' | 'low' | 'medium'
@@ -16,11 +18,11 @@ export type SchemaType = {
     kanbanorder: string
   }>
   readonly description: Readonly<{
-    id: string
+    id: ID_of<Description>
     body: string
   }>
   readonly comment: Readonly<{
-    id: string
+    id: ID_of<Comment>
     body: string
     creator: string
     issueId: string
@@ -28,7 +30,7 @@ export type SchemaType = {
     author: string
   }>
   readonly filter_state: Readonly<{
-    id: number
+    id: ID_of<FilterState>
     orderBy: string
     orderDirection: string
     status: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled' | null

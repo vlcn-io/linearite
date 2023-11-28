@@ -44,6 +44,9 @@ dependencies:
   '@vlcn.io/crsqlite-wasm':
     specifier: 0.16.0-next.0
     version: 0.16.0-next.0
+  '@vlcn.io/id':
+    specifier: ^0.0.3
+    version: 0.0.3(react@18.2.0)
   '@vlcn.io/react':
     specifier: 3.1.0-next.0
     version: 3.1.0-next.0(react@18.2.0)
@@ -1705,6 +1708,14 @@ packages:
       '@vlcn.io/wa-sqlite': 0.22.0-next.0
       '@vlcn.io/xplat-api': 0.15.0-next.0
       async-mutex: 0.4.0
+    dev: false
+
+  /@vlcn.io/id@0.0.3(react@18.2.0):
+    resolution: {integrity: sha512-SzhB0pSQSOEfqkKaoALDDVTS2aq+zpn6aL+d2s5r1CYx5W3UTJwstJo1bfmliUNBChHuvLhCAHJ0k/R4UWPVHA==}
+    peerDependencies:
+      react: ^18
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /@vlcn.io/react@3.1.0-next.0(react@18.2.0):
