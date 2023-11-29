@@ -5,10 +5,12 @@ import ViewOptionMenu from './ViewOptionMenu'
 import { MenuContext } from '../App'
 import FilterMenu from './contextmenu/FilterMenu'
 import { PriorityDisplay, StatusDisplay } from '../types/issue'
-import { Issue } from '../types'
-// import { querySQL, sql } from '@livestore/livestore'
-// import { useQuery, useStore } from '@livestore/livestore/react'
-import { FilterState } from '../domain/Schema'
+import { FilterState, Issue } from '../domain/SchemaType'
+import { first, useDB, useQuery2 } from '@vlcn.io/react'
+import { DBName } from '../domain/Schema'
+import { queries } from '../domain/queries'
+
+// @livestore
 
 interface Props {
   issues: readonly Issue[]
@@ -17,24 +19,13 @@ interface Props {
   title?: string
 }
 
-// const issueCount$ = querySQL<{ c: number }>((_) => sql`SELECT COUNT(id) AS c FROM issue`)
-//   .getFirstRow()
-//   .pipe((row) => row?.c ?? 0)
-// const filterState$ = querySQL<{ value: string }>((_) => sql`SELECT * FROM app_state WHERE "key" = 'filter_state'`)
-//   .getFirstRow({
-//     defaultValue: { value: '{}' },
-//   })
-//   .pipe<FilterState>((row) => JSON.parse(row.value))
-
 export default function TopFilter({ issues, hideSort, showSearch, title = 'All issues' }: Props) {
   const [showViewOption, setShowViewOption] = useState(false)
   const { showMenu, setShowMenu } = useContext(MenuContext)!
   const [searchQuery, setSearchQuery] = useState('')
-  // const totalIssuesCount = useQuery(issueCount$)
-  // const filterState = useQuery(filterState$)
-  // const { store } = useStore()
-  const filterState = {} as FilterState
-  const totalIssuesCount = 0
+  const ctx = useDB(DBName)
+  const filterState = first(useQuery2(ctx, queries.filterState).data) ?? {} as FilterState
+  const totalIssuesCount = first(useQuery2(ctx, queries.totalIssueCount).data)?.c ?? 0
 
   const filteredIssuesCount = issues.length
 

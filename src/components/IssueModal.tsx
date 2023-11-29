@@ -14,8 +14,10 @@ import StatusMenu from './contextmenu/StatusMenu'
 
 import { Priority, Status, PriorityDisplay, StatusType, PriorityType } from '../types/issue'
 import { showInfo, showWarning } from '../utils/notification'
-// import { useStore } from '@livestore/livestore/react'
-import { nanoid } from 'nanoid'
+import { useDB } from '@vlcn.io/react'
+import { DBName, newID } from '../domain/Schema'
+import { mutations } from '../domain/mutations'
+import { Issue } from '../domain/SchemaType'
 
 interface Props {
   isOpen: boolean
@@ -29,7 +31,7 @@ function IssueModal({ isOpen, onDismiss }: Props) {
   const [description, setDescription] = useState<string>()
   const [priority, setPriority] = useState<PriorityType>(Priority.NONE)
   const [status, setStatus] = useState<StatusType>(Status.BACKLOG)
-  // const { store } = useStore()
+  const ctx = useDB(DBName)
 
   const handleSubmit = async () => {
     if (title === '') {
@@ -37,26 +39,23 @@ function IssueModal({ isOpen, onDismiss }: Props) {
       return
     }
 
-    // const lastIssue = store.select(`SELECT kanbanorder FROM issue ORDER BY kanbanorder DESC LIMIT 1`)[0]
-    // const kanbanorder = generateKeyBetween(lastIssue?.kanbanorder, null)
-    const kanbanorder = 'aa';
+    const kanbanorder = '1';
 
     const date = Date.now()
-    const id = nanoid()
-    // store.applyEvent('createIssue', {
-    //   id,
-    //   title: title,
-    //   username: 'testuser',
-    //   priority: priority,
-    //   status: status,
-    //   modified: date,
-    //   created: date,
-    //   kanbanorder,
-    // })
-    // store.applyEvent('createDescription', {
-    //   id,
-    //   body: description ?? '',
-    // })
+    const id = newID<Issue>()
+    await mutations.createIssueWithDescription(ctx.db, {
+        id,
+        title: title,
+        creator: 'testuser',
+        priority: priority,
+        status: status,
+        modified: date,
+        created: date,
+        kanbanorder,
+      }, {
+        id,
+        body: description ?? '',
+      });
 
     if (onDismiss) onDismiss()
     reset()
