@@ -39,9 +39,6 @@ function IssueModal({ isOpen, onDismiss }: Props) {
       return
     }
 
-    // TODO: set up as_ordered an use that.
-    const kanbanorder = '1';
-
     const date = Date.now()
     const id = newID<Issue>()
     await mutations.createIssueWithDescription(ctx.db, {
@@ -52,7 +49,7 @@ function IssueModal({ isOpen, onDismiss }: Props) {
         status: status,
         modified: date,
         created: date,
-        kanbanorder,
+        kanbanorder: 1 // 1 means end of list. It'll find the appropriate fract index
       }, {
         id,
         body: description ?? '',

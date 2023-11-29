@@ -36,7 +36,7 @@ export const queries = {
     status: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled'
     created: number
     modified: number
-    kanbanorder: string
+    kanbanorder: any
   }>`SELECT * FROM issue WHERE id = ?`,
 
   issueDescription: S.sql<{

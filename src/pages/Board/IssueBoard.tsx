@@ -2,7 +2,6 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import { useMemo, useState, useEffect } from 'react'
 import { Status, StatusDisplay, StatusType } from '../../types/issue'
 import IssueCol from './IssueCol'
-import { generateKeyBetween } from 'fractional-indexing'
 import { Issue } from '../../domain/SchemaType'
 import { DBName } from '../../domain/Schema'
 import { useDB } from '@vlcn.io/react'
@@ -87,108 +86,34 @@ export default function IssueBoard({ issues }: IssueBoardProps) {
       prevIssue = columnIssues[index - 1]
       nextIssue = columnIssues[index]
     }
-    console.log('sameColumn', sameColumn)
-    console.log('prevIssue', prevIssue)
-    console.log('nextIssue', nextIssue)
     return { prevIssue, nextIssue }
   }
 
-  /**
-   * Fix duplicate kanbanorder, this is recursive so we can fix multiple consecutive
-   * issues with the same kanbanorder.
-   * @param issue The issue to fix the kanbanorder for
-   * @param issueBefore The issue immediately before one that needs fixing
-   * @returns The new kanbanorder that was set for the issue
-   */
-  const fixKanbanOrder = (issue: Issue, issueBefore: Issue) => {
-    // First we find the issue immediately after the issue that needs fixing.
-    const issueIndex = issuesByStatus[issue.status]?.indexOf(issue)
-    const issueAfter = issuesByStatus[issue.status]?.[issueIndex || 0 + 1]
-
-    // The kanbanorder of the issue before the issue that needs fixing
-    const prevKanbanOrder = issueBefore?.kanbanorder
-
-    // The kanbanorder of the issue after the issue that needs fixing
-    let nextKanbanOrder = issueAfter?.kanbanorder
-
-    // If the next issue has the same kanbanorder the next issue needs fixing too,
-    // we recursively call fixKanbanOrder for that issue to fix it's kanbanorder.
-    if (issueAfter && nextKanbanOrder && nextKanbanOrder === prevKanbanOrder) {
-      nextKanbanOrder = fixKanbanOrder(issueAfter, issueBefore)
-    }
-
-    // Generate a new kanbanorder between the previous and next issues
-    const kanbanorder = generateKeyBetween(prevKanbanOrder, nextKanbanOrder)
-
-    // Keep track of moved issues so we can override the kanbanorder when sorting
-    // We do this due to the momentary lag between updating the database and the live
-    // query updating the issues.
-    setMovedIssues((prev) => ({
-      ...prev,
-      [issue.id]: {
-        kanbanorder: kanbanorder,
-      },
-    }))
-
-    // Update the issue in the database
-    mutations.updateIssue(ctx.db, {
-      id: issue.id,
-      kanbanorder,
-    })
-
-    // Return the new kanbanorder
-    return kanbanorder
-  }
-
-  /**
-   * Get a new kanbanorder that sits between two other issues.
-   * Used to generate a new kanbanorder when moving an issue.
-   * @param issueBefore The issue immediately before the issue being moved
-   * @param issueAfter The issue immediately after the issue being moved
-   * @returns The new kanbanorder
-   */
-  const getNewKanbanOrder = (issueBefore: Issue, issueAfter: Issue) => {
-    const prevKanbanOrder = issueBefore?.kanbanorder
-    let nextKanbanOrder = issueAfter?.kanbanorder
-    if (nextKanbanOrder && nextKanbanOrder === prevKanbanOrder) {
-      // If the next issue has the same kanbanorder as the previous issue,
-      // we need to fix the kanbanorder of the next issue.
-      // This can happen when two users move issues into the same position at the same
-      // time.
-      nextKanbanOrder = fixKanbanOrder(issueAfter, issueBefore)
-    }
-    return generateKeyBetween(prevKanbanOrder, nextKanbanOrder)
-  }
-
   const onDragEnd = ({ source, destination, draggableId }: DropResult) => {
-    console.log(source, destination, draggableId)
     if (destination && destination.droppableId) {
-      const { prevIssue, nextIssue } = adjacentIssues(
+      const { prevIssue } = adjacentIssues(
         destination.droppableId as StatusType,
         destination.index,
         destination.droppableId === source.droppableId,
         source.index,
       )
-      // Get a new kanbanorder between the previous and next issues
-      const kanbanorder = getNewKanbanOrder(prevIssue, nextIssue)
-      // Keep track of moved issues so we can override the status and kanbanorder when
-      // sorting issues into columns.
-      const modified = new Date()
+
       setMovedIssues((prev) => ({
         ...prev,
         [draggableId]: {
           status: destination.droppableId as StatusType,
-          kanbanorder,
-          modified,
         },
       }))
 
       // Update the issue in the database
-      mutations.updateIssue(ctx.db, {
-        id: draggableId as ID_of<Issue>,
-        status: destination.droppableId as StatusType,
-        kanbanorder,
-      })
+      if (prevIssue) {
+        mutations.moveIssue(ctx.db, draggableId as ID_of<Issue>, prevIssue.id, destination.droppableId as StatusType);
+      } else {
+        mutations.updateIssue(ctx.db, {
+          id: draggableId as ID_of<Issue>,
+          status: destination.droppableId as StatusType,
+        })
+      }
     }
   }
 

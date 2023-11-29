@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS issue (
   "status" '"backlog" | "todo" | "in_progress" | "done" | "canceled"' DEFAULT 'todo' NOT NULL,
   "created" INTEGER NOT NULL,
   "modified" INTEGER NOT NULL,
-  "kanbanorder" TEXT NOT NULL
+  "kanbanorder" NOT NULL
 );
 
 SELECT crsql_fract_as_ordered('issue', 'kanbanorder');

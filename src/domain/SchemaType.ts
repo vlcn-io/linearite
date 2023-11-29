@@ -55,7 +55,7 @@ export type SchemaType = {
     status: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled'
     created: number
     modified: number
-    kanbanorder: string
+    kanbanorder: any
   }>
   readonly description: Readonly<{
     id: ID_of<Issue>

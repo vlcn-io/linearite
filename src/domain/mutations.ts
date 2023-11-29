@@ -1,5 +1,5 @@
 import { TXAsync } from "@vlcn.io/xplat-api"
-import { Issue, Description, Comment, DecodedFilterState, encodeFilterState } from "./SchemaType"
+import { Issue, Description, Comment, DecodedFilterState, encodeFilterState, StatusType } from "./SchemaType"
 import { ID_of } from "@vlcn.io/id"
 
 function colNames(obj: { [key: string]: unknown }) {
@@ -81,6 +81,13 @@ export const mutations = {
       `UPDATE description SET ${set(desc)} WHERE id = ?`,
       [...values(desc), desc.id]
     );
+  },
+
+  moveIssue(tx: TXAsync, id: ID_of<Issue>, afterId: ID_of<Issue> | null, newStatus: StatusType) {
+    return tx.exec(
+      `UPDATE issue_fractindex SET after_id = ?, status = ? WHERE id = ?`,
+      [afterId, newStatus, id]
+    )
   },
 
   async deleteIssue(tx: TXAsync, id: ID_of<Issue>) {
