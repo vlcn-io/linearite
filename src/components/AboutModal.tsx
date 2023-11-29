@@ -15,8 +15,8 @@ export default function AboutModal({ isOpen, onDismiss }: Props) {
             Linear
           </a>{' '}
           built using{' '}
-          <a href="https://github.com/livestorejs/livestore" target="_blank">
-            LiveStore
+          <a href="https://github.com/vlcn-io/js" target="_blank">
+            Vulcan
           </a>{' '}
           - the local-first sync layer for web and mobile apps.
         </p>
@@ -29,8 +29,8 @@ export default function AboutModal({ isOpen, onDismiss }: Props) {
         </p>
         <p className="my-1">
           We have replaced the canned data with a stack running{' '}
-          <a href="https://github.com/livestorejs" target="_blank">
-            LiveStore
+          <a href="https://github.com/vlcn-io/js" target="_blank">
+            Vulcan
           </a>
         </p>
       </div>

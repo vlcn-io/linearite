@@ -50,14 +50,14 @@ export default function ProfileMenu({ isOpen, className, onDismiss, setShowAbout
         >
           About
         </button>
-        <a href="https://github.com/livestorejs/livestore" className="flex items-center h-8 px-3 hover:bg-gray-100">
-          Visit LiveStore
+        <a href="https://vlcn.io" className="flex items-center h-8 px-3 hover:bg-gray-100">
+          Visit Vulcan
         </a>
-        <a href="https://github.com/livestorejs/livestore" className="flex items-center h-8 px-3 hover:bg-gray-100">
+        <a href="https://vlcn.io/docs" className="flex items-center h-8 px-3 hover:bg-gray-100">
           Documentation
         </a>
         <a
-          href="https://github.com/livestorejs/livestore/tree/main/examples/linearlite"
+          href="https://github.com/vlcn-io/js"
           className="flex items-center h-8 px-3 hover:bg-gray-100"
         >
           GitHub

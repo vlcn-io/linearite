@@ -48,10 +48,10 @@ function LeftMenu() {
             {/* Project selection */}
             <Link className="flex items-center p-2 pr-3 rounded cursor-pointer hover:bg-gray-100" to="/">
               <img
-                src="https://avatars.githubusercontent.com/u/145756592?s=48&v=4"
+                src="https://avatars.githubusercontent.com/u/114890635?s=48&v=4"
                 className="w-4.5 h-4.5 mr-2.5 rounded-sm"
               />
-              <span className="flex text-sm font-medium">livestore</span>
+              <span className="flex text-sm font-medium">Vulcan</span>
             </Link>
 
             {/* User avatar  */}
@@ -121,8 +121,8 @@ function LeftMenu() {
 
           {/* bottom group */}
           <div className="flex flex-col px-2 pb-2 text-gray-500 mt-7">
-            <a className="inline-flex" href="https://github.com/livestorejs/livestore">
-              <LiveStoreIcon className="w-3 h-3 mr-2 mt-1 scale-150" /> LiveStore
+            <a className="inline-flex" href="https://vlcn.io">
+              <LiveStoreIcon className="w-3 h-3 mr-2 mt-1 scale-150" /> Vulcan
             </a>
             <button className="inline-flex mt-1" onClick={() => setShowAboutModal(true)}>
               <HelpIcon className="w-3 mr-2 mt-1" /> About
