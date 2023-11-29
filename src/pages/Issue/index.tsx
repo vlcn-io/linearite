@@ -7,35 +7,22 @@ import StatusMenu from '../../components/contextmenu/StatusMenu'
 import PriorityIcon from '../../components/PriorityIcon'
 import StatusIcon from '../../components/StatusIcon'
 import Avatar from '../../components/Avatar'
-import { PriorityDisplay, StatusDisplay } from '../../types/issue'
+import { PriorityDisplay, PriorityType, StatusDisplay, StatusType } from '../../types/issue'
 import Editor from '../../components/editor/Editor'
 import DeleteModal from './DeleteModal'
 import Comments from './Comments'
-import { Issue } from '../../domain/SchemaType'
-// import { querySQL, sql } from '@livestore/livestore'
-// import { useStore, useTemporaryQuery } from '@livestore/livestore/react'
-
-// This would be best:
-// const issue$ = querySQL<Issue>((_) => sql`SELECT * FROM issue WHERE id = $id`).getFirstRow()
-// const issue = useQuery(issue$, { id })
+import { DBName } from '../../domain/Schema'
+import { first, useDB, useQuery2 } from '@vlcn.io/react'
+import { queries } from '../../domain/queries'
+import { mutations } from '../../domain/mutations'
 
 function IssuePage() {
   const navigate = useNavigate()
   const { id } = useParams() || ''
 
-  // const makeIssueQuery = useCallback(
-  //   () => querySQL<Issue>((_) => sql`SELECT * FROM issue WHERE id = '${id}'`).getFirstRow(),
-  //   [id],
-  // )
-  // const makeDescriptionQuery = useCallback(
-  //   () => querySQL<{ body: string }>((_) => sql`SELECT body FROM description WHERE id = '${id}'`).getFirstRow(),
-  //   [id],
-  // )
-  // const issue = useTemporaryQuery(makeIssueQuery)
-  // const description = useTemporaryQuery(makeDescriptionQuery).body
-  // const { store } = useStore()
-  const issue: Issue = {} as Issue;
-  const description = '';
+  const ctx = useDB(DBName)
+  const issue = first(useQuery2(ctx, queries.issue, [id]).data)
+  const description = first(useQuery2(ctx, queries.issueDescription, [id]).data)?.body
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
 
@@ -45,45 +32,36 @@ function IssuePage() {
     return <div className="p-8 w-full text-center">Issue not found</div>
   }
 
-  const handleStatusChange = (status: string) => {
-    // store.applyEvent('updateIssueStatus', {
-    //   id: issue.id,
-    //   status,
-    // })
+  const handleStatusChange = (status: StatusType) => {
+    mutations.updateIssue(ctx.db, {
+      id: issue.id,
+      status,
+    })
   }
 
-  const handlePriorityChange = (priority: string) => {
-    // store.applyEvent('updateIssuePriority', {
-    //   id: issue.id,
-    //   priority,
-    // })
+  const handlePriorityChange = (priority: PriorityType) => {
+    mutations.updateIssue(ctx.db, {
+      id: issue.id,
+      priority,
+    })
   }
 
   const handleTitleChange = (title: string) => {
-    // store.applyEvent('updateIssueTitle', {
-    //   id: issue.id,
-    //   title,
-    // })
+    mutations.updateIssue(ctx.db, {
+      id: issue.id,
+      title,
+    })
   }
 
   const handleDescriptionChange = (body: string) => {
-    // store.applyEvent('updateDescription', {
-    //   id: issue.id,
-    //   body,
-    // })
+    mutations.updateDescription(ctx.db, {
+      id: issue.id,
+      body,
+    })
   }
 
-  const handleDelete = () => {
-    // TODO: how to create a tx?
-    // store.applyEvent('deleteIssue', {
-    //   id: issue.id,
-    // })
-    // store.applyEvent('deleteDescription', {
-    //   id: issue.id,
-    // })
-    // store.applyEvent('deleteCommentsByIssueId', {
-    //   issueId: issue.id,
-    // })
+  const handleDelete = async () => {
+    await mutations.deleteIssue(ctx.db, issue.id)
     handleClose()
   }
 

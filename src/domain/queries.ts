@@ -2,6 +2,7 @@ import { Query } from '@vlcn.io/react'
 import { filterStateToOrder, filterStateToWhere } from '../utils/filterState'
 import { Schema as S } from './Schema'
 import { DecodedFilterState, Issue, PriorityType, StatusType, String_of } from './SchemaType'
+import {ID_of} from '@vlcn.io/id';
 
 export const queries = {
   // Types are auto-generated via `typed-sql`
@@ -25,5 +26,21 @@ export const queries = {
 
   listIssues: (filters: DecodedFilterState) => {
     return `SELECT * FROM issue ${filterStateToWhere(filters)} ${filterStateToOrder(filters)}` as Query<Issue>
-  }
+  },
+
+  issue: S.sql<{
+    id: ID_of<Issue>
+    title: string
+    creator: string
+    priority: 'none' | 'urgent' | 'high' | 'low' | 'medium'
+    status: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled'
+    created: number
+    modified: number
+    kanbanorder: string
+  }>`SELECT * FROM issue WHERE id = ?`,
+
+  issueDescription: S.sql<{
+    id: ID_of<Issue>
+    body: string
+  }>`SELECT * FROM description WHERE id = ?`,
 }

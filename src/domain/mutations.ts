@@ -1,5 +1,6 @@
 import { TXAsync } from "@vlcn.io/xplat-api"
 import { Issue, Description, Comment, DecodedFilterState, encodeFilterState } from "./SchemaType"
+import { ID_of } from "@vlcn.io/id"
 
 function colNames(obj: { [key: string]: unknown }) {
   return Object.keys(obj).map(key => `"${key}"`).join(', ');
@@ -82,7 +83,7 @@ export const mutations = {
     );
   },
 
-  async deleteIssue(tx: TXAsync, id: string) {
+  async deleteIssue(tx: TXAsync, id: ID_of<Issue>) {
     await tx.exec(
       `DELETE FROM issue WHERE id = ?`,
       [id]
