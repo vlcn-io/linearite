@@ -6,7 +6,7 @@ import svgr from 'vite-plugin-svgr'
 export default defineConfig({
   optimizeDeps: {
     // TODO remove once fixed https://github.com/vitejs/vite/issues/8427
-    exclude: [],
+    exclude: ["@vlcn.io/crsqlite-wasm"],
     include: ['react', 'react-dom'],
   },
   plugins: [

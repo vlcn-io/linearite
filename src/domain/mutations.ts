@@ -1,115 +1,90 @@
 import { DBAsync, TXAsync } from "@vlcn.io/xplat-api"
-import { Issue, Description } from "./SchemaType"
+import { Issue, Description, Comment, FilterState } from "./SchemaType"
+
+function colNames(obj: { [key: string]: unknown }) {
+  return Object.keys(obj).map(key => `"${key}"`).join(', ');
+}
+
+function placeholders(obj: { [key: string]: unknown }) {
+  return Object.keys(obj).map(() => '?').join(', ');
+}
+
+function values(obj: { [key: string]: unknown }) {
+  return Object.values(obj);
+}
+
+function set(obj: { [key: string]: unknown }) {
+  return Object.keys(obj).map(key => `"${key}" = ?`).join(', ');
+}
 
 export const mutations = {
   createIssue(tx: TXAsync, issue: Issue) {
-    // TODO: have template literals inject bind params
     return tx.exec(
-      `INSERT INTO issue ("id", "title", "priority", "status", "created", "modified", "kanbanorder")
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [issue.id, issue.title, issue.priority, issue.status, issue.created, issue.modified, issue.kanbanorder]);
+      `INSERT INTO issue (${colNames(issue)}) VALUES (${placeholders(issue)})`,
+      values(issue)
+    );
   },
 
   createDescription(tx: TXAsync, desc: Description) {
+    return tx.exec(
+      `INSERT INTO description (${colNames(desc)}) VALUES (${placeholders(desc)})`,
+      values(desc)
+    );
+  },
 
+  createIssueWithDescription(tx: TXAsync, issue: Issue, desc: Description) {
+    return tx.exec(
+      `INSERT INTO issue (${colNames(issue)}) VALUES (${placeholders(issue)})`,
+      values(issue)
+    ).then(() => {
+      return tx.exec(
+        `INSERT INTO description (${colNames(desc)}) VALUES (${placeholders(desc)})`,
+        values(desc)
+      );
+    });
+  },
+
+  createComment(tx: TXAsync, comment: Comment) {
+    return tx.exec(
+      `INSERT INTO comment (${colNames(comment)}) VALUES (${placeholders(comment)})`,
+      values(comment)
+    );
+  },
+
+  putFilterState(tx: TXAsync, filterState: FilterState) {
+    return tx.exec(
+      `INSERT INTO filter_state (${colNames(filterState)}) VALUES (${placeholders(filterState)})
+        ON CONFLICT DO UPDATE SET ${set(filterState)}`,
+      values(filterState)
+    );
+  },
+
+  updateIssue(tx: TXAsync, issue: Issue) {
+    return tx.exec(
+      `UPDATE issue SET ${set(issue)} WHERE id = ?`,
+      [...values(issue), issue.id]
+    );
+  },
+
+  updateDescription(tx: TXAsync, desc: Description) {
+    return tx.exec(
+      `UPDATE description SET ${set(desc)} WHERE id = ?`,
+      [...values(desc), desc.id]
+    );
+  },
+
+  async deleteIssue(tx: TXAsync, id: string) {
+    await tx.exec(
+      `DELETE FROM issue WHERE id = ?`,
+      [id]
+    );
+    await tx.exec(
+      `DELETE FROM description WHERE id = ?`,
+      [id]
+    );
+    await tx.exec(
+      `DELETE FROM comment WHERE issueId = ?`,
+      [id]
+    );
   }
 };
-// export const schema = makeSchema({
-//   // TODO get rid of `app_state` alias once fixed https://github.com/livestorejs/livestore/issues/25
-//   tables: { issue, description, comment, app_state: appState },
-//   actions: {
-//     createIssue: {
-//       statement: {
-//         sql: sql`INSERT INTO issue ("id", "title", "priority", "status", "created", "modified", "kanbanorder")
-//           VALUES ($id, $title, $priority, $status, $created, $modified, $kanbanorder)`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     createDescription: {
-//       statement: {
-//         sql: sql`INSERT INTO description ("id", "body") VALUES ($id, $body)`,
-//         writeTables: ['description'],
-//       },
-//     },
-//     createComment: {
-//       statement: {
-//         sql: sql`INSERT INTO comment ("id", "body", "issueId", "created", "author")
-//           VALUES ($id, $body, $issueId, $created, $author)`,
-//         writeTables: ['comment'],
-//       },
-//     },
-//     deleteIssue: {
-//       statement: {
-//         sql: sql`DELETE FROM issue WHERE id = $id`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     deleteDescriptin: {
-//       statement: {
-//         sql: sql`DELETE FROM description WHERE id = $id`,
-//         writeTables: ['description'],
-//       },
-//     },
-//     deleteComment: {
-//       statement: {
-//         sql: sql`DELETE FROM comment WHERE id = $id`,
-//         writeTables: ['comment'],
-//       },
-//     },
-//     deleteCommentsByIssueId: {
-//       statement: {
-//         sql: sql`DELETE FROM comment WHERE issueId = $issueId`,
-//         writeTables: ['comment'],
-//       },
-//     },
-//     updateIssue: {
-//       statement: {
-//         sql: sql`UPDATE issue SET title = $title, priority = $priority, status = $status, modified = $modified WHERE id = $id`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     updateIssueStatus: {
-//       statement: {
-//         sql: sql`UPDATE issue SET status = $status, modified = unixepoch() * 1000 WHERE id = $id`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     updateIssueKanbanOrder: {
-//       statement: {
-//         sql: sql`UPDATE issue SET kanbanorder = $kanbanorder, modified = unixepoch() * 1000 WHERE id = $id`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     updateIssueTitle: {
-//       statement: {
-//         sql: sql`UPDATE issue SET title = $title, modified = unixepoch() * 1000 WHERE id = $id`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     moveIssue: {
-//       statement: {
-//         sql: sql`UPDATE issue SET kanbanorder = $kanbanorder, status = $status, modified = unixepoch() * 1000 WHERE id = $id`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     updateIssuePriority: {
-//       statement: {
-//         sql: sql`UPDATE issue SET priority = $priority, modified = unixepoch() * 1000 WHERE id = $id`,
-//         writeTables: ['issue'],
-//       },
-//     },
-//     updateDescription: {
-//       statement: {
-//         sql: sql`UPDATE description SET body = $body WHERE id = $id`,
-//         writeTables: ['description'],
-//       },
-//     },
-//     upsertAppAtom: {
-//       statement: {
-//         sql: sql`INSERT INTO app_state (key, value) VALUES ($key, $value)
-//           ON CONFLICT (key) DO UPDATE SET value = $value`,
-//         writeTables: ['app_state'],
-//       },
-//     },
-//   },
-// })

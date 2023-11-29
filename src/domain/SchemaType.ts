@@ -30,7 +30,7 @@ export type SchemaType = {
     author: string
   }>
   readonly filter_state: Readonly<{
-    id: ID_of<FilterState>
+    id: 'singleton'
     orderBy: string
     orderDirection: string
     status: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled' | null

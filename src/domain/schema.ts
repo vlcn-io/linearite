@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS "comment" (
 );
 
 CREATE TABLE IF NOT EXISTS "filter_state" (
-  "id" 'ID_of<FilterState>' PRIMARY KEY NOT NULL,
+  "id" '"singleton"' PRIMARY KEY NOT NULL,
   "orderBy" TEXT DEFAULT 'created' NOT NULL,
   "orderDirection" TEXT DEFAULT 'asc' NOT NULL,
   "status" '"backlog" | "todo" | "in_progress" | "done" | "canceled"',
