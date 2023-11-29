@@ -2,7 +2,7 @@ import { Query } from '@vlcn.io/react'
 import { filterStateToOrder, filterStateToWhere } from '../utils/filterState'
 import { Schema as S } from './Schema'
 import { DecodedFilterState, Issue, PriorityType, StatusType, String_of } from './SchemaType'
-import {ID_of} from '@vlcn.io/id';
+import { ID_of } from '@vlcn.io/id'
 
 export const queries = {
   // Types are auto-generated via `typed-sql`
@@ -43,4 +43,12 @@ export const queries = {
     id: ID_of<Issue>
     body: string
   }>`SELECT * FROM description WHERE id = ?`,
+
+  issueComments: S.sql<{
+    id: ID_of<Comment>
+    body: string
+    creator: string
+    issueId: ID_of<Issue>
+    created: number
+  }>`SELECT * FROM comment WHERE issueId = ?`,
 }

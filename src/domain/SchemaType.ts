@@ -67,7 +67,6 @@ export type SchemaType = {
     creator: string
     issueId: ID_of<Issue>
     created: number
-    author: string
   }>
   readonly filter_state: Readonly<{
     id: 'singleton'

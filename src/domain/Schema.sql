@@ -22,8 +22,7 @@ CREATE TABLE IF NOT EXISTS "comment" (
   "body" TEXT DEFAULT '' NOT NULL,
   "creator" TEXT DEFAULT '' NOT NULL,
   "issueId" 'ID_of<Issue>' NOT NULL,
-  "created" INTEGER NOT NULL,
-  "author" TEXT NOT NULL
+  "created" INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS "filter_state" (

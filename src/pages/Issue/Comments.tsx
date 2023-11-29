@@ -5,8 +5,10 @@ import Avatar from '../../components/Avatar'
 import { formatDate } from '../../utils/date'
 import { showWarning } from '../../utils/notification'
 import { Comment, Issue } from '../../domain/SchemaType'
-// import { useStore, useTemporaryQuery } from '@livestore/livestore/react'
-// import { querySQL, sql } from '@livestore/livestore'
+import { DBName, newID } from '../../domain/Schema'
+import { useDB, useQuery2 } from '@vlcn.io/react'
+import { queries } from '../../domain/queries'
+import { mutations } from '../../domain/mutations'
 
 export interface CommentsProps {
   issue: Issue
@@ -14,13 +16,8 @@ export interface CommentsProps {
 
 function Comments({ issue }: CommentsProps) {
   const [newCommentBody, setNewCommentBody] = useState<string>('')
-  // const makeCommentQuery = useCallback(
-  //   () => querySQL<Comment>(() => sql`SELECT * FROM comment WHERE issueId = '${issue.id}' ORDER BY created ASC`),
-  //   [issue.id],
-  // )
-  // const comments = useTemporaryQuery(makeCommentQuery)
-  // const { store } = useStore()
-  const comments: Comment[] = [];
+  const ctx = useDB(DBName)
+  const comments = useQuery2(ctx, queries.issueComments, [issue.id]).data
 
   const commentList = () => {
     if (comments && comments.length > 0) {
@@ -39,19 +36,20 @@ function Comments({ issue }: CommentsProps) {
     }
   }
 
-  const handlePost = () => {
+  const handlePost = async () => {
     if (!newCommentBody) {
       showWarning('Please enter a comment before submitting', 'Comment required')
       return
     }
 
-    // store.applyEvent('createComment', {
-    //   id: nanoid(),
-    //   body: newCommentBody,
-    //   issueId: issue.id,
-    //   created: Date.now(),
-    //   author: 'testuser',
-    // })
+    const comment: Comment = {
+      id: newID<Comment>(),
+      body: newCommentBody,
+      issueId: issue.id,
+      created: Date.now(),
+      creator: 'testuser',
+    }
+    await mutations.createComment(ctx.db, comment)
     setNewCommentBody('')
   }
 

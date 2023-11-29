@@ -7,7 +7,9 @@ import PriorityMenu from '../../components/contextmenu/PriorityMenu'
 import PriorityIcon from '../../components/PriorityIcon'
 import { PriorityType } from '../../types/issue'
 import { Issue } from '../../domain/SchemaType'
-// import { useStore } from '@livestore/livestore/react'
+import { DBName } from '../../domain/Schema'
+import { useDB } from '@vlcn.io/react'
+import { mutations } from '../../domain/mutations'
 
 interface IssueProps {
   issue: Issue
@@ -29,7 +31,7 @@ function getStyle(provided: DraggableProvided, style?: CSSProperties): CSSProper
 
 // eslint-disable-next-line react-refresh/only-export-components
 const IssueItem = ({ issue, style, isDragging, provided }: IssueProps) => {
-  // const { store } = useStore()
+  const ctx = useDB(DBName)
   const navigate = useNavigate()
   const priorityIcon = (
     <span className="inline-block m-0.5 rounded-sm border border-gray-100 hover:border-gray-200 p-0.5">
@@ -37,12 +39,11 @@ const IssueItem = ({ issue, style, isDragging, provided }: IssueProps) => {
     </span>
   )
 
-  const updatePriority = (priority: PriorityType) => {
-    // store.applyEvent('updateIssuePriority', {
-    //   id: issue.id,
-    //   priority,
-    // })
-  }
+  const updatePriority = (priority: PriorityType) => 
+    mutations.updateIssue(ctx.db, {
+      id: issue.id,
+      priority,
+    })
 
   return (
     <div
