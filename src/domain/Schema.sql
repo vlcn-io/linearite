@@ -10,7 +10,9 @@ CREATE TABLE IF NOT EXISTS issue (
   "kanbanorder" NOT NULL
 );
 
--- SELECT crsql_fract_as_ordered('issue', 'kanbanorder');
+CREATE INDEX IF NOT EXISTS "issue_kanbanorder" ON "issue" ("kanbanorder");
+
+SELECT crsql_fract_as_ordered('issue', 'kanbanorder');
 
 CREATE TABLE IF NOT EXISTS "description" (
   "id" 'ID_of<Issue>' PRIMARY KEY NOT NULL,
