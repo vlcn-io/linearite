@@ -9,6 +9,11 @@ export default defineConfig({
     exclude: ["@vlcn.io/crsqlite-wasm"],
     include: ['react', 'react-dom'],
   },
+  // server: {
+  //   fs: {
+  //     strict: false,
+  //   }
+  // },
   plugins: [
     react(),
     svgr({
