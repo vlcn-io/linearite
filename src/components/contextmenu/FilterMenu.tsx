@@ -4,9 +4,13 @@ import { ContextMenuTrigger } from '@firefox-devtools/react-contextmenu'
 import { BsCheck2 } from 'react-icons/bs'
 import { Menu } from './menu'
 import { PriorityOptions, PriorityType, StatusOptions, StatusType } from '../../types/issue'
+import { decodeFilterState } from '../../domain/SchemaType'
+import { first, useDB, useQuery2 } from '@vlcn.io/react'
+import { queries } from '../../domain/queries'
+import { DBName } from '../../domain/Schema'
+import { mutations } from '../../domain/mutations'
 // import { querySQL, sql } from '@livestore/livestore'
 // import { useQuery, useStore } from '@livestore/livestore/react'
-import { FilterState } from '../../domain/Schema'
 
 interface Props {
   id: string
@@ -14,17 +18,10 @@ interface Props {
   className?: string
 }
 
-// const filterState$ = querySQL<{ value: string }>((_) => sql`SELECT * FROM app_state WHERE "key" = 'filter_state'`)
-//   .getFirstRow({
-//     defaultValue: { value: '{}' },
-//   })
-//   .pipe<FilterState>((row) => JSON.parse(row.value))
-
 function FilterMenu({ id, button, className }: Props) {
   const [keyword, setKeyword] = useState('')
-  // const filterState = useQuery(filterState$)
-  // const { store } = useStore()
-  const filterState = {} as FilterState;
+  const ctx = useDB(DBName)
+  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
 
   let priorities = PriorityOptions
   if (keyword !== '') {
@@ -68,13 +65,10 @@ function FilterMenu({ id, button, className }: Props) {
     } else {
       newPriority.push(priority)
     }
-    // store.applyEvent('upsertAppAtom', {
-    //   key: 'filter_state',
-    //   value: JSON.stringify({
-    //     ...filterState,
-    //     priority: newPriority,
-    //   }),
-    // })
+    mutations.putFilterState(ctx.db, {
+      ...filterState,
+      priority: newPriority,
+    });
   }
 
   const handleStatusSelect = (status: StatusType) => {
@@ -85,13 +79,10 @@ function FilterMenu({ id, button, className }: Props) {
     } else {
       newStatus.push(status)
     }
-    // store.applyEvent('upsertAppAtom', {
-    //   key: 'filter_state',
-    //   value: JSON.stringify({
-    //     ...filterState,
-    //     status: newStatus,
-    //   }),
-    // })
+    mutations.putFilterState(ctx.db, {
+      ...filterState,
+      status: newStatus,
+    });
   }
 
   return (

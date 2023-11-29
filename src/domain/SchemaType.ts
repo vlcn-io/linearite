@@ -14,16 +14,35 @@ export type PriorityType = 'none' | 'urgent' | 'high' | 'low' | 'medium'
 
 export type String_of<T> = string & { readonly [Symbols.brand]: T }
 export type DecodedFilterState = Omit<FilterState, 'status' | 'priority'> & {
-  status: StatusType[]
-  priority: PriorityType[]
+  status: StatusType[] | null
+  priority: PriorityType[] | null
 }
 
-export function decodeFilterState(filterState: FilterState) {
-    return {
-      ...filterState,
-      status: filterState.status ? JSON.parse(filterState.status) : [],
-      priority: filterState.priority ? JSON.parse(filterState.priority) : [],
-    } as DecodedFilterState
+export function decodeFilterState(filterState?: FilterState) {
+  if (!filterState) {
+    filterState = {
+      id: 'singleton',
+      orderBy: 'created',
+      orderDirection: 'asc',
+      status: null,
+      priority: null,
+      query: null,
+    };
+  }
+  return {
+    ...filterState,
+    status: filterState.status ? filterState.status.split(',') : null,
+    priority: filterState.priority ? filterState.priority.split(',') : null,
+  } as DecodedFilterState
+}
+
+export function encodeFilterState(filterState: DecodedFilterState) {
+  return {
+    ...filterState,
+    id: 'singleton',
+    status: filterState?.status == null ? null : filterState.status.join(','),
+    priority: filterState?.priority == null ? null : filterState.priority.join(','),
+  } as FilterState
 }
 
 // === custom code above this line ===

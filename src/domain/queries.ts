@@ -1,4 +1,5 @@
 import { Schema as S } from './Schema'
+import { PriorityType, StatusType, String_of } from './SchemaType'
 
 export const queries = {
   // Types are auto-generated via `typed-sql`

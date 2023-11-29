@@ -5,12 +5,12 @@ import ViewOptionMenu from './ViewOptionMenu'
 import { MenuContext } from '../App'
 import FilterMenu from './contextmenu/FilterMenu'
 import { PriorityDisplay, StatusDisplay } from '../types/issue'
-import { FilterState, Issue } from '../domain/SchemaType'
+import { Issue, decodeFilterState } from '../domain/SchemaType'
 import { first, useDB, useQuery2 } from '@vlcn.io/react'
 import { DBName } from '../domain/Schema'
 import { queries } from '../domain/queries'
-
-// @livestore
+import { mutations } from '../domain/mutations'
+import debounce from 'lodash.debounce'
 
 interface Props {
   issues: readonly Issue[]
@@ -24,20 +24,18 @@ export default function TopFilter({ issues, hideSort, showSearch, title = 'All i
   const { showMenu, setShowMenu } = useContext(MenuContext)!
   const [searchQuery, setSearchQuery] = useState('')
   const ctx = useDB(DBName)
-  const filterState = first(useQuery2(ctx, queries.filterState).data) ?? {} as FilterState
+  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
   const totalIssuesCount = first(useQuery2(ctx, queries.totalIssueCount).data)?.c ?? 0
 
   const filteredIssuesCount = issues.length
 
-  const handleSearchInner = (query: string) => {
-    // store.applyEvent('upsertAppAtom', {
-    //   key: 'filter_state',
-    //   value: JSON.stringify({
-    //     ...filterState,
-    //     query: query,
-    //   }),
-    // })
-  }
+  // is debounce required?
+  const handleSearchInner = debounce((query: string) => {
+    mutations.putFilterState(ctx.db, {
+      ...filterState,
+      query: query,
+    })
+  }, 100)
 
   const handleSearch = (query: string) => {
     setSearchQuery(query)
@@ -102,13 +100,10 @@ export default function TopFilter({ issues, hideSort, showSearch, title = 'All i
               <span
                 className="px-1 bg-gray-300 rounded-r cursor-pointer flex items-center"
                 onClick={() => {
-                  // store.applyEvent('upsertAppAtom', {
-                  //   key: 'filter_state',
-                  //   value: JSON.stringify({
-                  //     ...filterState,
-                  //     priority: undefined,
-                  //   }),
-                  // })
+                  mutations.putFilterState(ctx.db, {
+                    ...filterState,
+                    priority: null,
+                  })
                 }}
               >
                 <BsX size={16} />
@@ -124,13 +119,10 @@ export default function TopFilter({ issues, hideSort, showSearch, title = 'All i
               <span
                 className="px-1 bg-gray-300 rounded-r cursor-pointer flex items-center"
                 onClick={() => {
-                  // store.applyEvent('upsertAppAtom', {
-                  //   key: 'filter_state',
-                  //   value: JSON.stringify({
-                  //     ...filterState,
-                  //     status: undefined,
-                  //   }),
-                  // })
+                  mutations.putFilterState(ctx.db, {
+                    ...filterState,
+                    status: null,
+                  })
                 }}
               >
                 <BsX size={16} />

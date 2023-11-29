@@ -1,5 +1,5 @@
-import { DBAsync, TXAsync } from "@vlcn.io/xplat-api"
-import { Issue, Description, Comment, FilterState } from "./SchemaType"
+import { TXAsync } from "@vlcn.io/xplat-api"
+import { Issue, Description, Comment, DecodedFilterState, encodeFilterState } from "./SchemaType"
 
 function colNames(obj: { [key: string]: unknown }) {
   return Object.keys(obj).map(key => `"${key}"`).join(', ');
@@ -17,6 +17,7 @@ function set(obj: { [key: string]: unknown }) {
   return Object.keys(obj).map(key => `"${key}" = ?`).join(', ');
 }
 
+// TODO: prepare mutation statements
 export const mutations = {
   createIssue(tx: TXAsync, issue: Issue) {
     return tx.exec(
@@ -51,11 +52,12 @@ export const mutations = {
     );
   },
 
-  putFilterState(tx: TXAsync, filterState: FilterState) {
+  putFilterState(tx: TXAsync, filterState: DecodedFilterState) {
+    const encoded = encodeFilterState(filterState)
     return tx.exec(
-      `INSERT INTO filter_state (${colNames(filterState)}) VALUES (${placeholders(filterState)})
-        ON CONFLICT DO UPDATE SET ${set(filterState)}`,
-      values(filterState)
+      `INSERT INTO filter_state (${colNames(encoded)}) VALUES (${placeholders(encoded)})
+        ON CONFLICT DO UPDATE SET ${set(encoded)}`,
+      [...values(encoded), ...values(encoded)]
     );
   },
 
