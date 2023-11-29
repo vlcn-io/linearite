@@ -5,8 +5,8 @@ import { DraggableProvided } from 'react-beautiful-dnd'
 import Avatar from '../../components/Avatar'
 import PriorityMenu from '../../components/contextmenu/PriorityMenu'
 import PriorityIcon from '../../components/PriorityIcon'
-import { Issue } from '../../types'
 import { PriorityType } from '../../types/issue'
+import { Issue } from '../../domain/SchemaType'
 // import { useStore } from '@livestore/livestore/react'
 
 interface IssueProps {

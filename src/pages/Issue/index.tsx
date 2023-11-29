@@ -11,7 +11,7 @@ import { PriorityDisplay, StatusDisplay } from '../../types/issue'
 import Editor from '../../components/editor/Editor'
 import DeleteModal from './DeleteModal'
 import Comments from './Comments'
-import { Issue } from '../../types'
+import { Issue } from '../../domain/SchemaType'
 // import { querySQL, sql } from '@livestore/livestore'
 // import { useStore, useTemporaryQuery } from '@livestore/livestore/react'
 
@@ -133,7 +133,7 @@ function IssuePage() {
                 <div className="flex flex-[2_0_0] mr-2 md-mr-0 items-center">Opened by</div>
                 <div className="flex flex-[3_0_0]">
                   <button className="inline-flex items-center h-6 ps-1.5 pe-2 text-gray-500border-none rounded hover:bg-gray-100">
-                    <Avatar name={issue.creator} />
+                    <Avatar name={issue.creator ?? undefined} />
                     <span className="ml-1">{issue.creator}</span>
                   </button>
                 </div>
@@ -174,7 +174,7 @@ function IssuePage() {
             <input
               className="w-full px-3 py-1 text-lg font-semibold placeholder-gray-400 border-transparent rounded "
               placeholder="Issue title"
-              value={issue.title}
+              value={issue.title ?? undefined}
               onChange={(e) => handleTitleChange(e.target.value)}
             />
 

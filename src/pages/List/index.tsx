@@ -1,9 +1,9 @@
 import TopFilter from '../../components/TopFilter'
 import IssueList from './IssueList'
-import { Issue } from '../../types'
 // import { querySQL, sql } from '@livestore/livestore'
 // import { useQuery } from '@livestore/livestore/react'
 import { filterStateToOrder, filterStateToWhere } from '../../utils/filterState'
+import { Issue } from '../../domain/SchemaType'
 
 // const filterClause$ = querySQL<AppState>(`select * from app_state WHERE key = 'filter_state';`)
 //   // .getFirstRow({defaultValue: undefined })

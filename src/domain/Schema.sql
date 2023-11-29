@@ -1,8 +1,8 @@
 
 CREATE TABLE IF NOT EXISTS issue (
   "id" 'ID_of<Issue>' PRIMARY KEY NOT NULL,
-  "title" TEXT DEFAULT '',
-  "creator" TEXT DEFAULT '',
+  "title" TEXT DEFAULT '' NOT NULL,
+  "creator" TEXT DEFAULT '' NOT NULL,
   "priority" '"none" | "urgent" | "high" | "low" | "medium"' DEFAULT 'none' NOT NULL,
   "status" '"backlog" | "todo" | "in_progress" | "done" | "canceled"' DEFAULT 'todo' NOT NULL,
   "created" INTEGER NOT NULL,

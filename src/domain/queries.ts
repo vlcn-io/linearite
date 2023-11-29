@@ -2,7 +2,6 @@ import { Query } from '@vlcn.io/react'
 import { filterStateToWhere } from '../utils/filterState'
 import { Schema as S } from './Schema'
 import { DecodedFilterState, Issue, PriorityType, StatusType, String_of } from './SchemaType'
-import { ID_of } from '@vlcn.io/id'
 
 export const queries = {
   // Types are auto-generated via `typed-sql`

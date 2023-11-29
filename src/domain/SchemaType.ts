@@ -27,7 +27,7 @@ export function decodeFilterState(filterState?: FilterState) {
       status: null,
       priority: null,
       query: null,
-    };
+    }
   }
   return {
     ...filterState,
@@ -49,8 +49,8 @@ export function encodeFilterState(filterState: DecodedFilterState) {
 export type SchemaType = {
   readonly issue: Readonly<{
     id: ID_of<Issue>
-    title: string | null
-    creator: string | null
+    title: string
+    creator: string
     priority: 'none' | 'urgent' | 'high' | 'low' | 'medium'
     status: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled'
     created: number

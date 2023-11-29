@@ -4,10 +4,9 @@ import Editor from '../../components/editor/Editor'
 import Avatar from '../../components/Avatar'
 import { formatDate } from '../../utils/date'
 import { showWarning } from '../../utils/notification'
-import { Comment, Issue } from '../../types'
+import { Comment, Issue } from '../../domain/SchemaType'
 // import { useStore, useTemporaryQuery } from '@livestore/livestore/react'
 // import { querySQL, sql } from '@livestore/livestore'
-import { nanoid } from 'nanoid'
 
 export interface CommentsProps {
   issue: Issue

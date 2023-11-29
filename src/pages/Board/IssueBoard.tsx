@@ -2,10 +2,10 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd'
 import { useMemo, useState, useEffect } from 'react'
 import { Status, StatusDisplay, StatusType } from '../../types/issue'
 import IssueCol from './IssueCol'
-import { Issue } from '../../types'
-// import { useStore } from '@livestore/livestore/react'
 import { generateKeyBetween } from 'fractional-indexing'
+import { Issue } from '../../domain/SchemaType'
 
+// @livestore
 export interface IssueBoardProps {
   issues: readonly Issue[]
 }
