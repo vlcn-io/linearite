@@ -62,7 +62,13 @@ export const mutations = {
     );
   },
 
-  updateIssue(tx: TXAsync, issue: Issue) {
+  updateIssue(tx: TXAsync, issue: Partial<Issue>) {
+    if (!issue.modified) {
+      issue = {
+        ...issue,
+        modified: Date.now()
+      }
+    }
     return tx.exec(
       `UPDATE issue SET ${set(issue)} WHERE id = ?`,
       [...values(issue), issue.id]

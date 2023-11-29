@@ -1,23 +1,14 @@
 import TopFilter from '../../components/TopFilter'
 import IssueList from './IssueList'
-// import { querySQL, sql } from '@livestore/livestore'
-// import { useQuery } from '@livestore/livestore/react'
-import { filterStateToOrder, filterStateToWhere } from '../../utils/filterState'
-import { Issue } from '../../domain/SchemaType'
-
-// const filterClause$ = querySQL<AppState>(`select * from app_state WHERE key = 'filter_state';`)
-//   // .getFirstRow({defaultValue: undefined })
-//   .pipe((filterStates) => {
-//     // TODO this handling should be improved (see https://github.com/livestorejs/livestore/issues/22)
-//     if (filterStates.length === 0) return ''
-//     const filterStateObj = JSON.parse(filterStates[0]!.value)
-//     return filterStateToWhere(filterStateObj) + ' ' + filterStateToOrder(filterStateObj)
-//   })
-// const visibleIssues$ = querySQL<Issue>((get) => sql`select * from issue ${get(filterClause$)}`)
+import { decodeFilterState } from '../../domain/SchemaType'
+import { first, useDB, useQuery2 } from '@vlcn.io/react'
+import { queries } from '../../domain/queries'
+import { DBName } from '../../domain/Schema'
 
 function List({ showSearch = false }) {
-  // const issues = useQuery(visibleIssues$)
-  const issues: Issue[] = []
+  const ctx = useDB(DBName)
+  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
+  const issues = useQuery2(ctx, queries.listIssues(filterState)).data ?? []
 
   return (
     <div className="flex flex-col flex-grow">

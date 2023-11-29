@@ -39,6 +39,7 @@ function IssueModal({ isOpen, onDismiss }: Props) {
       return
     }
 
+    // TODO: set up as_ordered an use that.
     const kanbanorder = '1';
 
     const date = Date.now()

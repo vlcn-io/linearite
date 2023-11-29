@@ -9,7 +9,9 @@ import { useNavigate } from 'react-router-dom'
 import { formatDate } from '../../utils/date'
 import { PriorityType, StatusType } from '../../types/issue'
 import { Issue } from '../../domain/SchemaType'
-// import { useStore } from '@livestore/livestore/react'
+import { useDB } from '@vlcn.io/react'
+import { DBName } from '../../domain/Schema'
+import { mutations } from '../../domain/mutations'
 
 interface Props {
   issue: Issue
@@ -19,21 +21,19 @@ interface Props {
 // eslint-disable-next-line react-refresh/only-export-components
 function IssueRow({ issue, style }: Props) {
   const navigate = useNavigate()
-  // const { store } = useStore()
+  const ctx = useDB(DBName)
 
-  const handleChangeStatus = (status: StatusType) => {
-    // store.applyEvent('updateIssueStatus', {
-    //   id: issue.id,
-    //   status,
-    // })
-  }
+  const handleChangeStatus = (status: StatusType) => 
+    mutations.updateIssue(ctx.db, {
+      id: issue.id,
+      status,
+    })
 
-  const handleChangePriority = (priority: PriorityType) => {
-    // store.applyEvent('updateIssuePriority', {
-    //   id: issue.id,
-    //   priority,
-    // })
-  }
+  const handleChangePriority = (priority: PriorityType) =>
+    mutations.updateIssue(ctx.db, {
+      id: issue.id,
+      priority,
+    })
 
   return (
     <div

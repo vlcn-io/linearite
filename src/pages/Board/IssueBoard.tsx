@@ -4,8 +4,11 @@ import { Status, StatusDisplay, StatusType } from '../../types/issue'
 import IssueCol from './IssueCol'
 import { generateKeyBetween } from 'fractional-indexing'
 import { Issue } from '../../domain/SchemaType'
+import { DBName } from '../../domain/Schema'
+import { useDB } from '@vlcn.io/react'
+import { mutations } from '../../domain/mutations'
+import { ID_of } from '@vlcn.io/id'
 
-// @livestore
 export interface IssueBoardProps {
   issues: readonly Issue[]
 }
@@ -18,7 +21,7 @@ interface MovedIssues {
 }
 
 export default function IssueBoard({ issues }: IssueBoardProps) {
-  // const { store } = useStore()
+  const ctx = useDB(DBName)
   const [movedIssues, setMovedIssues] = useState<MovedIssues>({})
 
   // Issues are coming from a live query, this may not have updated before we rerender
@@ -128,10 +131,10 @@ export default function IssueBoard({ issues }: IssueBoardProps) {
     }))
 
     // Update the issue in the database
-    // store.applyEvent('updateIssueKanbanOrder', {
-    //   id: issue.id,
-    //   kanbanorder,
-    // })
+    mutations.updateIssue(ctx.db, {
+      id: issue.id,
+      kanbanorder,
+    })
 
     // Return the new kanbanorder
     return kanbanorder
@@ -181,11 +184,11 @@ export default function IssueBoard({ issues }: IssueBoardProps) {
       }))
 
       // Update the issue in the database
-      // store.applyEvent('moveIssue', {
-      //   id: draggableId,
-      //   status: destination.droppableId,
-      //   kanbanorder,
-      // })
+      mutations.updateIssue(ctx.db, {
+        id: draggableId as ID_of<Issue>,
+        status: destination.droppableId as StatusType,
+        kanbanorder,
+      })
     }
   }
 

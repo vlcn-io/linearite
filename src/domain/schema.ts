@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS issue (
   "kanbanorder" TEXT NOT NULL
 );
 
+SELECT crsql_fract_as_ordered('issue', 'kanbanorder');
+
 CREATE TABLE IF NOT EXISTS "description" (
   "id" 'ID_of<Issue>' PRIMARY KEY NOT NULL,
   "body" TEXT DEFAULT '' NOT NULL

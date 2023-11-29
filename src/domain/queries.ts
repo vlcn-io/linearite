@@ -1,5 +1,5 @@
 import { Query } from '@vlcn.io/react'
-import { filterStateToWhere } from '../utils/filterState'
+import { filterStateToOrder, filterStateToWhere } from '../utils/filterState'
 import { Schema as S } from './Schema'
 import { DecodedFilterState, Issue, PriorityType, StatusType, String_of } from './SchemaType'
 
@@ -22,4 +22,8 @@ export const queries = {
   boardIssues: (filters: DecodedFilterState) => {
     return `SELECT * FROM issue ${filterStateToWhere(filters)} ORDER BY kanbanorder ASC` as Query<Issue>
   },
+
+  listIssues: (filters: DecodedFilterState) => {
+    return `SELECT * FROM issue ${filterStateToWhere(filters)} ${filterStateToOrder(filters)}` as Query<Issue>
+  }
 }
