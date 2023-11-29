@@ -3,7 +3,6 @@ import { memo, useEffect, useRef, useState } from 'react'
 import { BsChevronRight as ChevronRight } from 'react-icons/bs'
 import { ReactComponent as CloseIcon } from '../assets/icons/close.svg'
 import { ReactComponent as LivestoreIcon } from '../assets/images/icon.inverse.svg'
-import { generateKeyBetween } from 'fractional-indexing'
 
 import Modal from '../components/Modal'
 import Editor from '../components/editor/Editor'
@@ -12,12 +11,12 @@ import StatusIcon from './StatusIcon'
 import PriorityMenu from './contextmenu/PriorityMenu'
 import StatusMenu from './contextmenu/StatusMenu'
 
-import { Priority, Status, PriorityDisplay, StatusType, PriorityType } from '../types/issue'
+import { Priority, Status, PriorityDisplay } from '../types/issue'
 import { showInfo, showWarning } from '../utils/notification'
 import { useDB } from '@vlcn.io/react'
 import { DBName, newID } from '../domain/Schema'
 import { mutations } from '../domain/mutations'
-import { Issue } from '../domain/SchemaType'
+import { Issue, PriorityType, StatusType } from '../domain/SchemaType'
 
 interface Props {
   isOpen: boolean

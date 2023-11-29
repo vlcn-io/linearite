@@ -7,7 +7,7 @@ import StatusMenu from '../../components/contextmenu/StatusMenu'
 import PriorityIcon from '../../components/PriorityIcon'
 import StatusIcon from '../../components/StatusIcon'
 import Avatar from '../../components/Avatar'
-import { PriorityDisplay, PriorityType, StatusDisplay, StatusType } from '../../types/issue'
+import { PriorityDisplay, StatusDisplay } from '../../types/issue'
 import Editor from '../../components/editor/Editor'
 import DeleteModal from './DeleteModal'
 import Comments from './Comments'
@@ -15,6 +15,7 @@ import { DBName } from '../../domain/Schema'
 import { first, useDB, useQuery2 } from '@vlcn.io/react'
 import { queries } from '../../domain/queries'
 import { mutations } from '../../domain/mutations'
+import { PriorityType, StatusType } from '../../domain/SchemaType'
 
 function IssuePage() {
   const navigate = useNavigate()

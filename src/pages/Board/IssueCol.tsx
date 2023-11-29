@@ -11,8 +11,7 @@ import {
 import { FixedSizeList as List, areEqual } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import IssueItem, { itemHeight } from './IssueItem'
-import { Issue } from '../../types'
-import { StatusType } from '../../types/issue'
+import { Issue, StatusType } from '../../domain/SchemaType'
 
 interface Props {
   status: StatusType

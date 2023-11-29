@@ -20,8 +20,6 @@ export const Priority = {
   MEDIUM: 'medium',
 } as const
 
-export type PriorityType = (typeof Priority)[keyof typeof Priority]
-
 export const PriorityDisplay = {
   [Priority.NONE]: 'None',
   [Priority.URGENT]: 'Urgent',
@@ -57,8 +55,6 @@ export const Status = {
   DONE: 'done',
   CANCELED: 'canceled',
 } as const
-
-export type StatusType = (typeof Status)[keyof typeof Status]
 
 export const StatusDisplay = {
   [Status.BACKLOG]: 'Backlog',

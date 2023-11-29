@@ -2,7 +2,8 @@ import { Portal } from '../Portal'
 import { ReactNode, useState } from 'react'
 import { ContextMenuTrigger } from '@firefox-devtools/react-contextmenu'
 import { Menu } from './menu'
-import { PriorityOptions, PriorityType } from '../../types/issue'
+import { PriorityOptions } from '../../types/issue'
+import { PriorityType } from '../../domain/SchemaType'
 
 interface Props {
   id: string

@@ -1,8 +1,9 @@
 import { Portal } from '../Portal'
 import { ReactNode, useState } from 'react'
 import { ContextMenuTrigger } from '@firefox-devtools/react-contextmenu'
-import { StatusOptions, StatusType } from '../../types/issue'
+import { StatusOptions } from '../../types/issue'
 import { Menu } from './menu'
+import { StatusType } from '../../domain/SchemaType'
 
 interface Props {
   id: string

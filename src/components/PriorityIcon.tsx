@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { PriorityIcons, PriorityType } from '../types/issue'
+import { PriorityIcons } from '../types/issue'
+import { PriorityType } from '../domain/SchemaType'
 
 interface Props {
   priority: PriorityType

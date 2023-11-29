@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { StatusIcons, StatusType } from '../types/issue'
+import { StatusIcons } from '../types/issue'
+import { StatusType } from '../domain/SchemaType'
 
 interface Props {
   status: StatusType

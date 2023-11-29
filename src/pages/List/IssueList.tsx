@@ -2,7 +2,7 @@ import { FixedSizeList as List, areEqual } from 'react-window'
 import { memo, type CSSProperties } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import IssueRow from './IssueRow'
-import { Issue } from '../../types'
+import { Issue } from '../../domain/SchemaType'
 
 export interface IssueListProps {
   issues: readonly Issue[]
