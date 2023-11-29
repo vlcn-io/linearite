@@ -18,6 +18,7 @@ function set(obj: { [key: string]: unknown }) {
 }
 
 // TODO: prepare mutation statements
+// TODO: tables used cache for writes
 export const mutations = {
   createIssue(tx: TXAsync, issue: Issue) {
     return tx.exec(

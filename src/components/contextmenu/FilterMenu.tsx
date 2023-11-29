@@ -9,8 +9,6 @@ import { first, useDB, useQuery2 } from '@vlcn.io/react'
 import { queries } from '../../domain/queries'
 import { DBName } from '../../domain/Schema'
 import { mutations } from '../../domain/mutations'
-// import { querySQL, sql } from '@livestore/livestore'
-// import { useQuery, useStore } from '@livestore/livestore/react'
 
 interface Props {
   id: string

@@ -1,5 +1,8 @@
+import { Query } from '@vlcn.io/react'
+import { filterStateToWhere } from '../utils/filterState'
 import { Schema as S } from './Schema'
-import { PriorityType, StatusType, String_of } from './SchemaType'
+import { DecodedFilterState, Issue, PriorityType, StatusType, String_of } from './SchemaType'
+import { ID_of } from '@vlcn.io/id'
 
 export const queries = {
   // Types are auto-generated via `typed-sql`
@@ -16,4 +19,8 @@ export const queries = {
     priority: String_of<PriorityType[]> | null
     query: string | null
   }>`SELECT * FROM filter_state`,
+
+  boardIssues: (filters: DecodedFilterState) => {
+    return `SELECT * FROM issue ${filterStateToWhere(filters)} ORDER BY kanbanorder ASC` as Query<Issue>
+  },
 }

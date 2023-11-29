@@ -2,7 +2,8 @@ import { Transition } from '@headlessui/react'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { useRef } from 'react'
 import Select from './Select'
-import { useFilterState } from '../utils/filterState'
+
+// @livestore
 
 interface Props {
   isOpen: boolean
@@ -10,25 +11,26 @@ interface Props {
 }
 export default function ViewOptionMenu({ isOpen, onDismiss }: Props) {
   const ref = useRef(null)
-  const [filterState, setFilterState] = useFilterState()
+  // const [filterState, setFilterState] = useFilterState()
 
   useClickOutside(ref, () => {
     if (isOpen && onDismiss) onDismiss()
   })
 
   const handleOrderByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterState({
-      ...filterState,
-      orderBy: e.target.value,
-    })
+    // setFilterState({
+    //   ...filterState,
+    //   orderBy: e.target.value,
+    // })
   }
 
   const handleOrderDirectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterState({
-      ...filterState,
-      orderDirection: e.target.value as 'asc' | 'desc',
-    })
+    // setFilterState({
+    //   ...filterState,
+    //   orderDirection: e.target.value as 'asc' | 'desc',
+    // })
   }
+  const filterState = {} as any;
 
   return (
     <div ref={ref}>
