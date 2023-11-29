@@ -2,8 +2,11 @@ import { Transition } from '@headlessui/react'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { useRef } from 'react'
 import Select from './Select'
-
-// @livestore
+import { first, useDB, useQuery2 } from '@vlcn.io/react'
+import { DBName } from '../domain/Schema'
+import { mutations } from '../domain/mutations'
+import { decodeFilterState } from '../domain/SchemaType'
+import { queries } from '../domain/queries'
 
 interface Props {
   isOpen: boolean
@@ -11,26 +14,24 @@ interface Props {
 }
 export default function ViewOptionMenu({ isOpen, onDismiss }: Props) {
   const ref = useRef(null)
-  // const [filterState, setFilterState] = useFilterState()
+  const ctx = useDB(DBName)
 
   useClickOutside(ref, () => {
     if (isOpen && onDismiss) onDismiss()
   })
 
-  const handleOrderByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    // setFilterState({
-    //   ...filterState,
-    //   orderBy: e.target.value,
-    // })
-  }
+  const handleOrderByChange = (e: React.ChangeEvent<HTMLSelectElement>) => 
+    mutations.putFilterState(ctx.db, {
+      ...filterState,
+      orderBy: e.target.value,
+    })
 
-  const handleOrderDirectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    // setFilterState({
-    //   ...filterState,
-    //   orderDirection: e.target.value as 'asc' | 'desc',
-    // })
-  }
-  const filterState = {} as any;
+  const handleOrderDirectionChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
+    mutations.putFilterState(ctx.db, {
+      ...filterState,
+      orderDirection: e.target.value as 'asc' | 'desc',
+    })
+  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
 
   return (
     <div ref={ref}>

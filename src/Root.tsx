@@ -6,11 +6,11 @@ import { DBName, SchemaName } from './domain/Schema';
 export default function Root() {
   return (
     <DBProvider
-    dbname={DBName}
-    schema={{
-      name: SchemaName,
-      content: schemaContent,
-    }}
-    Render={() => <App />}
+      dbname={DBName}
+      schema={{
+        name: SchemaName,
+        content: schemaContent,
+      }}
+      Render={() => <App />}
   />)
 }
