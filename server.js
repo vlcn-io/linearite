@@ -1,7 +1,5 @@
-import SQLiteDB from "better-sqlite3";
 import express from "express";
 import ViteExpress from "vite-express";
-import { extensionPath } from "@vlcn.io/crsqlite";
 import { attachWebsocketServer } from "@vlcn.io/ws-server";
 import * as http from "http";
 
@@ -27,8 +25,10 @@ const dbCache = attachWebsocketServer(server, wsConfig);
 // The "room" set in the client identifies the DB used on the server.
 // If the client sets the room to "linear" then it will connect to the
 // "linear" DB on the server.
-dbCache.use("linear", "Schema.sql", (db) => {
-  
+dbCache.use("linear", "Schema.sql", (wrapper) => {
+  // getDB_unsafe is only unsafe under LiteFS deployments
+  const db = wrapper.getDB_unsafe();
+  seedDB(db);
 });
 
 server.listen(PORT, () =>
@@ -37,19 +37,35 @@ server.listen(PORT, () =>
 
 ViteExpress.bind(app, server);
 
-// function seedDB(db) {
-//   const existing = db.prepare(`SELECT 1 FROM issue LIMIT 1`).all();
-//   if (existing.length > 0) {
-//     return;
-//   }
-//   console.log('Seeding DB');
-//   ctx.db.tx(async (tx) => {
-//     let i = 0;
-//     for (const [issue, description] of createTasks(10000)) {
-//       console.log(`Creating issue ${i++}`)
-//       await mutations.createIssue(tx, issue);
-//       await mutations.createDescription(tx, description);
-//     }
-//   });
-//   console.log('Done seeding DB');
-// }
+/**
+ * 
+ * @param {import("better-sqlite3").Database} db 
+ * @returns 
+ */
+async function seedDB(db) {
+  const existing = db.prepare(`SELECT * FROM issues`).all();
+  if (existing.length > 0) {
+    console.log('db already seeded')
+    return;
+  }
+  console.log('Seeding DB');
+
+  const createIssueStmt = db.prepare(
+    `INSERT INTO issues
+      (id, title, creator, priority, status, created, modified, kanbandorder)
+      VALUES 
+      (?, ?, ?, ?, ?, ?, ?, ?)`
+  );
+  const createDescriptionStmt = db.prepare(
+    `INSERT INTO descriptions (id, body) VALUES (?, ?)`
+  );
+  db.transaction(() => {
+    let i = 0;
+    for (const [issue, description] of createTasks(10000)) {
+      createIssueStmt.run(Object.values(issue));
+      createDescriptionStmt.run(Object.values(description));
+    }
+  })();
+
+  console.log('Done seeding DB');
+}
