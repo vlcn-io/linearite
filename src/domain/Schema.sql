@@ -10,8 +10,6 @@ CREATE TABLE IF NOT EXISTS issue (
   "kanbanorder" NOT NULL
 );
 
-CREATE INDEX IF NOT EXISTS "issue_kanbanorder" ON "issue" ("kanbanorder");
-
 SELECT crsql_fract_as_ordered('issue', 'kanbanorder');
 
 CREATE TABLE IF NOT EXISTS "description" (
@@ -25,13 +23,4 @@ CREATE TABLE IF NOT EXISTS "comment" (
   "creator" TEXT DEFAULT '' NOT NULL,
   "issueId" 'ID_of<Issue>' NOT NULL,
   "created" INTEGER NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS "filter_state" (
-  "id" '"singleton"' PRIMARY KEY NOT NULL,
-  "orderBy" TEXT DEFAULT 'created' NOT NULL,
-  "orderDirection" TEXT DEFAULT 'asc' NOT NULL,
-  "status" 'String_of<StatusType[]>',
-  "priority" 'String_of<PriorityType[]>',
-  "query" TEXT
 );

@@ -4,11 +4,12 @@ import { ContextMenuTrigger } from '@firefox-devtools/react-contextmenu'
 import { BsCheck2 } from 'react-icons/bs'
 import { Menu } from './menu'
 import { PriorityOptions, StatusOptions } from '../../types/issue'
-import { PriorityType, StatusType, decodeFilterState } from '../../domain/SchemaType'
+import { PriorityType, StatusType } from '../../domain/SchemaType'
 import { first, useDB, useQuery2 } from '@vlcn.io/react'
 import { queries } from '../../domain/queries'
 import { DBName } from '../../domain/Schema'
 import { mutations } from '../../domain/mutations'
+import { useFilterState } from '../../hooks/useFilterState'
 
 interface Props {
   id: string
@@ -19,7 +20,7 @@ interface Props {
 function FilterMenu({ id, button, className }: Props) {
   const [keyword, setKeyword] = useState('')
   const ctx = useDB(DBName)
-  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
+  const [filterState, setFilterState] = useFilterState()
 
   let priorities = PriorityOptions
   if (keyword !== '') {
@@ -63,7 +64,7 @@ function FilterMenu({ id, button, className }: Props) {
     } else {
       newPriority.push(priority)
     }
-    mutations.putFilterState(ctx.db, {
+    setFilterState({
       ...filterState,
       priority: newPriority,
     });
@@ -77,7 +78,7 @@ function FilterMenu({ id, button, className }: Props) {
     } else {
       newStatus.push(status)
     }
-    mutations.putFilterState(ctx.db, {
+    setFilterState({
       ...filterState,
       status: newStatus,
     });

@@ -1,54 +1,49 @@
 import { Query } from '@vlcn.io/react'
-import { filterStateToOrder, filterStateToWhere } from '../utils/filterState'
 import { Schema as S } from './Schema'
-import { DecodedFilterState, Issue, PriorityType, StatusType, String_of } from './SchemaType'
+import { Issue } from './SchemaType'
 import { ID_of } from '@vlcn.io/id'
+import { FilterState, filterStateToOrder, filterStateToWhere } from '../hooks/useFilterState'
 
 export const queries = {
   // Types are auto-generated via `typed-sql`
   // run `pnpm sql-watch` to generate types
   totalIssueCount: S.sql<{
-    c: number
-  }>`SELECT COUNT(*) AS c FROM issue`,
+  c: number
+}>`SELECT COUNT(*) AS c FROM issue`,
 
   filterState: S.sql<{
-    id: 'singleton'
-    orderBy: string
-    orderDirection: string
-    status: String_of<StatusType[]> | null
-    priority: String_of<PriorityType[]> | null
-    query: string | null
-  }>`SELECT * FROM filter_state`,
+  
+}>`SELECT * FROM filter_state`,
 
-  boardIssues: (filters: DecodedFilterState) => {
+  boardIssues: (filters: FilterState) => {
     return `SELECT * FROM issue ${filterStateToWhere(filters)} ORDER BY kanbanorder ASC` as Query<Issue>
   },
 
-  listIssues: (filters: DecodedFilterState) => {
+  listIssues: (filters: FilterState) => {
     return `SELECT * FROM issue ${filterStateToWhere(filters)} ${filterStateToOrder(filters)}` as Query<Issue>
   },
 
   issue: S.sql<{
-    id: ID_of<Issue>
-    title: string
-    creator: string
-    priority: 'none' | 'urgent' | 'high' | 'low' | 'medium'
-    status: 'backlog' | 'todo' | 'in_progress' | 'done' | 'canceled'
-    created: number
-    modified: number
-    kanbanorder: any
-  }>`SELECT * FROM issue WHERE id = ?`,
+  id: ID_of<Issue>;
+  title: string;
+  creator: string;
+  priority: "none" | "urgent" | "high" | "low" | "medium";
+  status: "backlog" | "todo" | "in_progress" | "done" | "canceled";
+  created: number;
+  modified: number;
+  kanbanorder: any
+}>`SELECT * FROM issue WHERE id = ?`,
 
   issueDescription: S.sql<{
-    id: ID_of<Issue>
-    body: string
-  }>`SELECT * FROM description WHERE id = ?`,
+  id: ID_of<Issue>;
+  body: string
+}>`SELECT * FROM description WHERE id = ?`,
 
   issueComments: S.sql<{
-    id: ID_of<Comment>
-    body: string
-    creator: string
-    issueId: ID_of<Issue>
-    created: number
-  }>`SELECT * FROM comment WHERE issueId = ?`,
+  id: ID_of<Comment>;
+  body: string;
+  creator: string;
+  issueId: ID_of<Issue>;
+  created: number
+}>`SELECT * FROM comment WHERE issueId = ?`,
 }

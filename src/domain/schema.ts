@@ -36,13 +36,4 @@ CREATE TABLE IF NOT EXISTS "comment" (
   "issueId" 'ID_of<Issue>' NOT NULL,
   "created" INTEGER NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS "filter_state" (
-  "id" '"singleton"' PRIMARY KEY NOT NULL,
-  "orderBy" TEXT DEFAULT 'created' NOT NULL,
-  "orderDirection" TEXT DEFAULT 'asc' NOT NULL,
-  "status" 'String_of<StatusType[]>',
-  "priority" 'String_of<PriorityType[]>',
-  "query" TEXT
-);
 `
