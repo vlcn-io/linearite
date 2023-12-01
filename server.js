@@ -63,7 +63,7 @@ async function seedDB(db) {
   );
   db.transaction(() => {
     let i = 0;
-    for (const [issue, description] of createIssues(10000)) {
+    for (const [issue, description] of createIssues(7000)) {
       createIssueStmt.run(issue.id, issue.title, issue.creator, issue.priority, issue.status, issue.created, issue.modified, issue.kanbanorder);
       createDescriptionStmt.run(description.id, description.body);
     }
