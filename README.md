@@ -11,6 +11,7 @@ https://github.com/vlcn-io/linearite/assets/1009003/377b64aa-3b2d-4333-8be9-9318
 - [ ] Paginated transaction sync -- right now we sync all 20,000 rows at once since they were written in a single transaction.
 - [ ] Dev tools to simplify dropping the DB on the client
 - [ ] Dev tools to download a copy of the DB from the browser
+- [ ] Scale the example to 10 million issues
 
 ## Running
 
