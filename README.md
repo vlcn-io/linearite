@@ -8,6 +8,7 @@ https://github.com/vlcn-io/linearite/assets/1009003/377b64aa-3b2d-4333-8be9-9318
 - [ ] Paginated infinite scroll so we don't re-fetch 10k items from SQLite each time
 - [ ] Deploy to fly.io
 - [ ] A guide that walks through the implementation of this
+- [ ] Paginated transaction sync -- right now we sync all 20,000 rows at once since they were written in a single transaction.
 
 ## Running
 
