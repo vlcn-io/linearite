@@ -28,13 +28,15 @@
     "@vlcn.io/id": "0.1.0-next.2",
     "@vlcn.io/react": "link:../js/packages/react",
     "@vlcn.io/typed-sql": "link:../typed-sql/packages/typed-sql",
-    "@vlcn.io/xplat-api": "link:../js/packages/xplat-api",
     "@vlcn.io/ws-browserdb": "link:../js/packages/ws-browserdb",
     "@vlcn.io/ws-client": "link:../js/packages/ws-client",
     "@vlcn.io/ws-server": "link:../js/packages/ws-server",
+    "@vlcn.io/xplat-api": "link:../js/packages/xplat-api",
     "animate.css": "^4.1.1",
+    "better-sqlite3": "^9.1.1",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.9",
+    "express": "^4.18.2",
     "fractional-indexing": "^3.2.0",
     "jsonwebtoken": "^9.0.2",
     "lodash.debounce": "^4.0.8",
@@ -49,7 +51,8 @@
     "react-virtualized-auto-sizer": "^1.0.20",
     "react-window": "^1.8.9",
     "tiptap-markdown": "^0.8.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vite-express": "^0.11.1"
   },
   "devDependencies": {
     "@svgr/plugin-jsx": "^8.1.0",

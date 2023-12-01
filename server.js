@@ -27,7 +27,7 @@ const dbCache = attachWebsocketServer(server, wsConfig);
 // "linear" DB on the server.
 dbCache.use("linear", "Schema.sql", (wrapper) => {
   // getDB_unsafe is only unsafe under LiteFS deployments
-  const db = wrapper.getDB_unsafe();
+  const db = wrapper.getDB();
   seedDB(db);
 });
 
@@ -43,7 +43,7 @@ ViteExpress.bind(app, server);
  * @returns 
  */
 async function seedDB(db) {
-  const existing = db.prepare(`SELECT * FROM issues`).all();
+  const existing = db.prepare(`SELECT * FROM issue`).all();
   if (existing.length > 0) {
     console.log('db already seeded')
     return;
@@ -51,13 +51,13 @@ async function seedDB(db) {
   console.log('Seeding DB');
 
   const createIssueStmt = db.prepare(
-    `INSERT INTO issues
-      (id, title, creator, priority, status, created, modified, kanbandorder)
+    `INSERT INTO issue
+      (id, title, creator, priority, status, created, modified, kanbanorder)
       VALUES 
       (?, ?, ?, ?, ?, ?, ?, ?)`
   );
   const createDescriptionStmt = db.prepare(
-    `INSERT INTO descriptions (id, body) VALUES (?, ?)`
+    `INSERT INTO description (id, body) VALUES (?, ?)`
   );
   db.transaction(() => {
     let i = 0;
