@@ -1,6 +1,6 @@
 import { ReactComponent as HelpIcon } from '../assets/icons/help.svg'
 import { ReactComponent as MenuIcon } from '../assets/icons/menu.svg'
-import { ReactComponent as LiveStoreIcon } from '../assets/images/icon.inverse.svg'
+import { ReactComponent as VulcanIcon } from '../assets/images/icon.inverse.svg'
 import { ReactComponent as BacklogIcon } from '../assets/icons/circle-dot.svg'
 import { MenuContext } from '../App'
 import classnames from 'classnames'
@@ -122,7 +122,7 @@ function LeftMenu() {
           {/* bottom group */}
           <div className="flex flex-col px-2 pb-2 text-gray-500 mt-7">
             <a className="inline-flex" href="https://vlcn.io">
-              <LiveStoreIcon className="w-3 h-3 mr-2 mt-1 scale-150" /> Vulcan
+              <VulcanIcon className="w-3 h-3 mr-2 mt-1 scale-150" /> Vulcan
             </a>
             <button className="inline-flex mt-1" onClick={() => setShowAboutModal(true)}>
               <HelpIcon className="w-3 mr-2 mt-1" /> About
