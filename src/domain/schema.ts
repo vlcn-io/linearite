@@ -3,7 +3,7 @@ import { schema } from '@vlcn.io/typed-sql'
 import { nanoid } from 'nanoid';
 import {ID_of} from '@vlcn.io/id';
 
-export const SchemaName = 'schema.sql'
+export const SchemaName = 'Schema.sql'
 // DB name does not need to be static by any means. See other example apps and the vite-start for dynamic db names.
 export const DBName = 'linear';
 export function newID<T>(): ID_of<T> {

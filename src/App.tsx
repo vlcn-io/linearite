@@ -7,6 +7,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import List from './pages/List'
 import Issue from './pages/Issue'
 import LeftMenu from './components/LeftMenu'
+import SyncWorker from "./sync-worker.js?worker";
+import { DBName } from './domain/Schema'
+import { useSync } from '@vlcn.io/react'
 
 interface MenuContextInterface {
   showMenu: boolean
@@ -20,20 +23,28 @@ const slideUp = cssTransition({
   exit: 'animate__animated animate__slideOutDown',
 })
 
-// function deleteDB() {
-//   console.log("Deleting DB as schema doesn't match server's")
-//   const DBDeleteRequest = window.indexedDB.deleteDatabase(dbName)
-//   DBDeleteRequest.onsuccess = function () {
-//     console.log('Database deleted successfully')
-//   }
-//   // the indexedDB cannot be deleted if the database connection is still open,
-//   // so we need to reload the page to close any open connections.
-//   // On reload, the database will be recreated.
-//   window.location.reload()
-// }
+function getEndpoint() {
+  let proto = "ws:";
+  const host = window.location.host;
+  if (window.location.protocol === "https:") {
+    proto = "wss:";
+  }
 
+  return `${proto}//${host}/sync`;
+}
+
+const worker = new SyncWorker();
 const App = () => {
   const [showMenu, setShowMenu] = useState(false)
+  useSync({
+    // Name of the local database to sync
+    dbname: DBName,
+    endpoint: getEndpoint(),
+    // Name of the remote database to sync
+    room: DBName,
+    // Worker process that carries out the sync
+    worker,
+  })
 
   const router = (
     <Routes>

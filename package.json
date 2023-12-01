@@ -4,13 +4,11 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "reset": "npm run backend:down && npm run backend:up && sleep 5 && npm run db:migrate && npm run client:generate && npm run db:load-data",
-    "dev": "vite",
+    "dev": "node ./server.js",
+    "start": "NODE_ENV=production node ./server.js",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "typecheck": "tsc --noEmit --skipLibCheck",
-    "preview": "vite preview",
-    "vite": "vite",
     "sql-watch": "typed-sql -p . --sql --schemaTyping=parallel"
   },
   "dependencies": {
@@ -31,6 +29,9 @@
     "@vlcn.io/react": "3.1.0-next.2",
     "@vlcn.io/typed-sql": "0.3.0-next.2",
     "@vlcn.io/xplat-api": "0.15.0-next.2",
+    "@vlcn.io/ws-browserdb": "0.2.0-next.2",
+    "@vlcn.io/ws-client": "0.2.0-next.2",
+    "@vlcn.io/ws-server": "0.2.0-next.2",
     "animate.css": "^4.1.1",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.9",
