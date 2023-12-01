@@ -23,7 +23,7 @@ export type SchemaType = {
     status: "backlog" | "todo" | "in_progress" | "done" | "canceled";
     created: number;
     modified: number;
-    kanbanorder: any
+    kanbanorder: any | null
   }>;
   readonly description: Readonly<{
     id: ID_of<Issue>;
@@ -33,7 +33,7 @@ export type SchemaType = {
     id: ID_of<Comment>;
     body: string;
     creator: string;
-    issueId: ID_of<Issue>;
+    issueId: ID_of<Issue> | null;
     created: number
   }>
 };

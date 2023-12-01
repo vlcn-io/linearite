@@ -5,10 +5,8 @@ import { BsCheck2 } from 'react-icons/bs'
 import { Menu } from './menu'
 import { PriorityOptions, StatusOptions } from '../../types/issue'
 import { PriorityType, StatusType } from '../../domain/SchemaType'
-import { first, useDB, useQuery2 } from '@vlcn.io/react'
-import { queries } from '../../domain/queries'
+import { useDB } from '@vlcn.io/react'
 import { DBName } from '../../domain/Schema'
-import { mutations } from '../../domain/mutations'
 import { useFilterState } from '../../hooks/useFilterState'
 
 interface Props {

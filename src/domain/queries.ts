@@ -31,7 +31,7 @@ export const queries = {
   status: "backlog" | "todo" | "in_progress" | "done" | "canceled";
   created: number;
   modified: number;
-  kanbanorder: any
+  kanbanorder: any | null
 }>`SELECT * FROM issue WHERE id = ?`,
 
   issueDescription: S.sql<{
@@ -43,7 +43,7 @@ export const queries = {
   id: ID_of<Comment>;
   body: string;
   creator: string;
-  issueId: ID_of<Issue>;
+  issueId: ID_of<Issue> | null;
   created: number
 }>`SELECT * FROM comment WHERE issueId = ?`,
 }
