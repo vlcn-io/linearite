@@ -3,6 +3,8 @@ import ViteExpress from "vite-express";
 import { attachWebsocketServer } from "@vlcn.io/ws-server";
 import * as http from "http";
 
+import { createIssues } from "./createIssues.js";
+
 const PORT = parseInt(process.env.PORT || "8080");
 
 const app = express();
@@ -61,7 +63,7 @@ async function seedDB(db) {
   );
   db.transaction(() => {
     let i = 0;
-    for (const [issue, description] of createTasks(10000)) {
+    for (const [issue, description] of createIssues(10000)) {
       createIssueStmt.run(Object.values(issue));
       createDescriptionStmt.run(Object.values(description));
     }

@@ -1,5 +1,4 @@
-import { newID } from "../domain/Schema";
-import { PriorityType, StatusType , Issue, Description} from "../domain/SchemaType";
+import { nanoid } from "nanoid";
 
 export const names = [
   "John",
@@ -26,10 +25,10 @@ export const labels = [
   "bug",
   "feature",
 ];
-export const priorities: PriorityType[] = ["none", "low", "medium", "high", "urgent"];
-export const statuses: StatusType[] = ["backlog", "todo", "in_progress", "done", "canceled"];
+export const priorities = ["none", "low", "medium", "high", "urgent"];
+export const statuses = ["backlog", "todo", "in_progress", "done", "canceled"];
 
-export function* createTasks(numTasks: number): Generator<[Issue, Description]> {
+export function* createIssues(numTasks) {
   const actionPhrases = [
     "Implement",
     "Develop",
@@ -79,15 +78,10 @@ export function* createTasks(numTasks: number): Generator<[Issue, Description]> 
     "And ensure proper error feedback to the user",
   ];
 
-  const getRandomItem = <T>(items: T[]) =>
+  const getRandomItem = (items) =>
     items[Math.floor(Math.random() * items.length)];
-  const getRandomSubset = <T>(items: T[]) => {
-    const count = Math.floor(Math.random() * items.length);
-    const shuffled = items.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
-  };
 
-  const generateText = (): [string, string] => {
+  const generateText = () => {
     const action = getRandomItem(actionPhrases);
     const feature = getRandomItem(featurePhrases);
     const purpose = getRandomItem(purposePhrases);
@@ -100,8 +94,8 @@ export function* createTasks(numTasks: number): Generator<[Issue, Description]> 
 
   for (let i = 0; i < numTasks; i++) {
     const [title, description] = generateText();
-    const task: Issue = {
-      id: newID<Issue>(),
+    const task = {
+      id: nanoid(),
       creator: getRandomItem(names),
       title,
       created: Date.now() - (i % 365 * 5) * 24 * 60 * 60 * 1000,
