@@ -1,8 +1,8 @@
 import { useSearchParams } from 'react-router-dom'
-import { PriorityType, StatusType } from '../domain/SchemaType'
+import { Issue, PriorityType, StatusType } from '../domain/SchemaType'
 
 export interface FilterState {
-  orderBy: string
+  orderBy: keyof Issue
   orderDirection: 'asc' | 'desc'
   status?: StatusType[]
   priority?: PriorityType[]
@@ -14,7 +14,7 @@ export function useFilterState(): [
   (state: Partial<FilterState>) => void
 ] {
   const [searchParams, setSearchParams] = useSearchParams()
-  const orderBy = searchParams.get('orderBy') ?? 'created'
+  const orderBy = (searchParams.get('orderBy') ?? 'created') as keyof Issue
   const orderDirection =
     (searchParams.get('orderDirection') as 'asc' | 'desc') ?? 'desc'
   const status = searchParams
@@ -71,7 +71,7 @@ export function useFilterState(): [
 }
 
 
-export function filterStateToWhere(filterState: FilterState) {
+export function filterStateToWhere(filterState: FilterState, cursor: Issue | null) {
   const { status, priority, query } = filterState
   let where = 'WHERE '
   const orig = where
@@ -86,14 +86,33 @@ export function filterStateToWhere(filterState: FilterState) {
   }
   if (query) {
     // TODO: description search too?
+    // TODO: FTS5
     if (where !== orig) {
       where += ' OR '
     }
     where += `TITLE LIKE '%${query}%'`
   }
+
+  // Now check the order-by
+  // and the cursor.
+  // Add a constraint such that we will fetch what is after the cursor
+  // if we have a cursor.
+  if (cursor) {
+    if (where !== orig) {
+      where += ' AND '
+    }
+    where += `("${filterState.orderBy}" > ${cursor[filterState.orderBy]}
+      OR (
+        ${filterState.orderBy} = ${cursor[filterState.orderBy]} AND
+        id > ${cursor.id}
+      )
+    )`
+  }
+
   if (where === orig) {
     return ''
   }
+
   return where
 }
 

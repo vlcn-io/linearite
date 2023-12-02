@@ -5,6 +5,7 @@ import IssueRow from './IssueRow'
 import { Issue } from '../../domain/SchemaType'
 import VirtualTable from './VirtualTable'
 
+export const ROW_HEIGHT = 36;
 export interface IssueListProps {
   issues: readonly Issue[]
 }
@@ -32,7 +33,7 @@ function IssueList({issues}: IssueListProps) {
             rowRenderer={rowRenderer}
             width={width}
             height={height}
-            rowHeight={36}
+            rowHeight={ROW_HEIGHT}
             rows={issues}
             startIndex={0}
             onNextPage={() => {}}

@@ -15,12 +15,16 @@ export const queries = {
   
 }>`SELECT * FROM filter_state`,
 
-  boardIssues: (filters: FilterState) => {
-    return `SELECT * FROM issue ${filterStateToWhere(filters)} ORDER BY kanbanorder ASC` as Query<Issue>
+  boardIssues: (filters: FilterState, cursor: Issue) => {
+    return `SELECT * FROM issue ${filterStateToWhere(filters, null)} ORDER BY kanbanorder ASC` as Query<Issue>
   },
 
-  listIssues: (filters: FilterState) => {
-    return `SELECT * FROM issue ${filterStateToWhere(filters)} ${filterStateToOrder(filters)}` as Query<Issue>
+  listIssues: (filters: FilterState, cursor: Issue | null) => {
+    return `SELECT * FROM
+      issue
+      ${filterStateToWhere(filters, cursor)}
+      ${filterStateToOrder(filters)}
+      LIMIT ?` as Query<Issue>
   },
 
   issue: S.sql<{
