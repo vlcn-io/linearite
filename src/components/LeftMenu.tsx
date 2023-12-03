@@ -16,6 +16,7 @@ import AboutModal from './AboutModal'
 import IssueModal from './IssueModal'
 import ItemGroup from './ItemGroup'
 import ProfileMenu from './ProfileMenu'
+import { LinkWithOrderBy } from './LinkWithOrderBy'
 
 // eslint-disable-next-line react-refresh/only-export-components
 function LeftMenu() {
@@ -46,13 +47,13 @@ function LeftMenu() {
         <div className="flex flex-col flex-grow-0 flex-shrink-0 px-5 py-3">
           <div className="flex items-center justify-between">
             {/* Project selection */}
-            <Link className="flex items-center p-2 pr-3 rounded cursor-pointer hover:bg-gray-100" to="/">
+            <LinkWithOrderBy className="flex items-center p-2 pr-3 rounded cursor-pointer hover:bg-gray-100" to="/">
               <img
                 src="https://avatars.githubusercontent.com/u/114890635?s=48&v=4"
                 className="w-4.5 h-4.5 mr-2.5 rounded-sm"
               />
               <span className="flex text-sm font-medium">Vulcan</span>
-            </Link>
+            </LinkWithOrderBy>
 
             {/* User avatar  */}
             <div className="relative">
@@ -82,22 +83,22 @@ function LeftMenu() {
             >
               <AddIcon className="mr-2.5 w-3.5 h-3.5" /> New Issue
             </button>
-            <Link
+            <LinkWithOrderBy
               to="/search"
               className="inline-flex ms-2 items-center px-2 py-2 mt-3 bg-white border border-gray-300 rounded hover:bg-gray-100 h-7"
             >
               <SearchIcon className="w-3.5 h-3.5" />
-            </Link>
+            </LinkWithOrderBy>
           </div>
         </div>
 
         <div className="flex flex-col flex-shrink flex-grow overflow-y-auto mb-0.5 px-2">
           <ItemGroup title="Your Issues">
-            <Link to="/" className="flex items-center pl-6 rounded cursor-pointer group h-7 hover:bg-gray-100">
+            <LinkWithOrderBy to="/" className="flex items-center pl-6 rounded cursor-pointer group h-7 hover:bg-gray-100">
               <IssuesIcon className="w-3.5 h-3.5 mr-2" />
               <span>All Issues</span>
-            </Link>
-            <Link
+            </LinkWithOrderBy>
+            <LinkWithOrderBy
               to="/?status=todo,in_progress"
               className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100"
             >
@@ -105,11 +106,11 @@ function LeftMenu() {
                 <span className="block w-2 h-full border-r"></span>
               </span>
               <span>Active</span>
-            </Link>
-            <Link to="/?status=backlog" className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100">
+            </LinkWithOrderBy>
+            <LinkWithOrderBy to="/?status=backlog" className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100">
               <BacklogIcon className="w-3.5 h-3.5 mr-2" />
               <span>Backlog</span>
-            </Link>
+            </LinkWithOrderBy>
             <Link to="/board" className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100">
               <BoardIcon className="w-3.5 h-3.5 mr-2" />
               <span>Board</span>
