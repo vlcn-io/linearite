@@ -14,21 +14,19 @@ import debounce from 'lodash.debounce'
 import { useFilterState } from '../hooks/useFilterState'
 
 interface Props {
-  issues: readonly Issue[]
+  filteredIssuesCount: number
   hideSort?: boolean
   showSearch?: boolean
   title?: string
 }
 
-export default function TopFilter({ issues, hideSort, showSearch, title = 'All issues' }: Props) {
+export default function TopFilter({ filteredIssuesCount, hideSort, showSearch, title = 'All issues' }: Props) {
   const [showViewOption, setShowViewOption] = useState(false)
   const { showMenu, setShowMenu } = useContext(MenuContext)!
   const [searchQuery, setSearchQuery] = useState('')
   const ctx = useDB(DBName)
   const [filterState, setFilterState] = useFilterState()
   const totalIssuesCount = first(useQuery2(ctx, queries.totalIssueCount).data)?.c ?? 0
-
-  const filteredIssuesCount = issues.length
 
   // is debounce required?
   const handleSearchInner = debounce((query: string) => {

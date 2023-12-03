@@ -11,9 +11,8 @@ export const queries = {
   c: number
 }>`SELECT COUNT(*) AS c FROM issue`,
 
-  filterState: S.sql<{
-  
-}>`SELECT * FROM filter_state`,
+  filteredIssueCount: (filters: FilterState) =>
+    `SELECT count(*) as c FROM issue ${filterStateToWhere(filters, null)}` as Query<{c: number}>,
 
   boardIssues: (filters: FilterState, cursor: Issue) => {
     return `SELECT * FROM issue ${filterStateToWhere(filters, null)} ORDER BY kanbanorder ASC` as Query<Issue>
