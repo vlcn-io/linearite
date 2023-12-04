@@ -1,8 +1,8 @@
 import { Query } from '@vlcn.io/react'
+import { filterStateToOrder, filterStateToWhere } from '../utils/filterState'
 import { Schema as S } from './Schema'
-import { Issue } from './SchemaType'
+import { DecodedFilterState, Issue, PriorityType, StatusType, String_of } from './SchemaType'
 import { ID_of } from '@vlcn.io/id'
-import { FilterState, filterStateToOrder, filterStateToWhere } from '../hooks/useFilterState'
 
 export const queries = {
   // Types are auto-generated via `typed-sql`
@@ -11,14 +11,15 @@ export const queries = {
   c: number
 }>`SELECT COUNT(*) AS c FROM issue`,
 
-  filteredIssueCount: (filters: FilterState) =>
+  filteredIssueCount: (filters: DecodedFilterState) =>
     `SELECT count(*) as c FROM issue ${filterStateToWhere(filters, null)}` as Query<{c: number}>,
 
-  boardIssues: (filters: FilterState, cursor: Issue) => {
+  boardIssues: (filters: DecodedFilterState, cursor: Issue | null) => {
+    // TODO: page after cursor
     return `SELECT * FROM issue ${filterStateToWhere(filters, null)} ORDER BY kanbanorder ASC` as Query<Issue>
   },
 
-  listIssues: (filters: FilterState, cursor: Issue | null) => {
+  listIssues: (filters: DecodedFilterState, cursor: Issue | null) => {
     return `SELECT * FROM
       issue
       ${filterStateToWhere(filters, cursor)}
@@ -36,6 +37,15 @@ export const queries = {
   modified: number;
   kanbanorder: any | null
 }>`SELECT * FROM issue WHERE id = ?`,
+
+  filterState: S.sql<{
+  id: "singleton";
+  orderBy: "title" | "creator" | "priority" | "status" | "created" | "modified";
+  orderDirection: "asc" | "desc";
+  status: String_of<StatusType[]> | null;
+  priority: String_of<PriorityType[]> | null;
+  query: string | null
+}>`SELECT * FROM filter_state`,
 
   issueDescription: S.sql<{
   id: ID_of<Issue>;

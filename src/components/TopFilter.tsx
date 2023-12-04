@@ -5,13 +5,12 @@ import ViewOptionMenu from './ViewOptionMenu'
 import { MenuContext } from '../App'
 import FilterMenu from './contextmenu/FilterMenu'
 import { PriorityDisplay, StatusDisplay } from '../types/issue'
-import { Issue } from '../domain/SchemaType'
+import { Issue, decodeFilterState } from '../domain/SchemaType'
 import { first, useDB, useQuery2 } from '@vlcn.io/react'
 import { DBName } from '../domain/Schema'
 import { queries } from '../domain/queries'
 import { mutations } from '../domain/mutations'
 import debounce from 'lodash.debounce'
-import { useFilterState } from '../hooks/useFilterState'
 
 interface Props {
   filteredIssuesCount: number
@@ -25,12 +24,12 @@ export default function TopFilter({ filteredIssuesCount, hideSort, showSearch, t
   const { showMenu, setShowMenu } = useContext(MenuContext)!
   const [searchQuery, setSearchQuery] = useState('')
   const ctx = useDB(DBName)
-  const [filterState, setFilterState] = useFilterState()
+  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
   const totalIssuesCount = first(useQuery2(ctx, queries.totalIssueCount).data)?.c ?? 0
 
   // is debounce required?
   const handleSearchInner = debounce((query: string) => {
-    setFilterState({
+    mutations.putFilterState(ctx.db, {
       ...filterState,
       query: query,
     })
@@ -99,9 +98,9 @@ export default function TopFilter({ filteredIssuesCount, hideSort, showSearch, t
               <span
                 className="px-1 bg-gray-300 rounded-r cursor-pointer flex items-center"
                 onClick={() => {
-                  setFilterState({
+                  mutations.putFilterState(ctx.db, {
                     ...filterState,
-                    priority: undefined,
+                    priority: null,
                   })
                 }}
               >
@@ -118,9 +117,9 @@ export default function TopFilter({ filteredIssuesCount, hideSort, showSearch, t
               <span
                 className="px-1 bg-gray-300 rounded-r cursor-pointer flex items-center"
                 onClick={() => {
-                  setFilterState({
+                  mutations.putFilterState(ctx.db, {
                     ...filterState,
-                    status: undefined,
+                    status: null,
                   })
                 }}
               >

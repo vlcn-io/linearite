@@ -5,8 +5,8 @@ import Select from './Select'
 import { first, useDB, useQuery2 } from '@vlcn.io/react'
 import { DBName } from '../domain/Schema'
 import { mutations } from '../domain/mutations'
+import { decodeFilterState } from '../domain/SchemaType'
 import { queries } from '../domain/queries'
-import { useFilterState } from '../hooks/useFilterState'
 
 interface Props {
   isOpen: boolean
@@ -14,24 +14,24 @@ interface Props {
 }
 export default function ViewOptionMenu({ isOpen, onDismiss }: Props) {
   const ref = useRef(null)
-
-  const [filterState, setFilterState] = useFilterState()
+  const ctx = useDB(DBName)
 
   useClickOutside(ref, () => {
     if (isOpen && onDismiss) onDismiss()
   })
 
   const handleOrderByChange = (e: React.ChangeEvent<HTMLSelectElement>) => 
-    setFilterState({
+    mutations.putFilterState(ctx.db, {
       ...filterState,
-      orderBy: e.target.value,
+      orderBy: e.target.value as 'priority' | 'status' | 'created' | 'modified',
     })
 
   const handleOrderDirectionChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
-    setFilterState({
+    mutations.putFilterState(ctx.db, {
       ...filterState,
       orderDirection: e.target.value as 'asc' | 'desc',
     })
+  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
 
   return (
     <div ref={ref}>

@@ -27,3 +27,12 @@ CREATE TABLE IF NOT EXISTS "comment" (
   "created" INTEGER NOT NULL DEFAULT 0
 );
 SELECT crsql_as_crr('comment');
+
+CREATE TABLE IF NOT EXISTS "filter_state" (
+  "id" '"singleton"' PRIMARY KEY NOT NULL,
+  "orderBy" '"title" | "creator" | "priority" | "status" | "created" | "modified"' DEFAULT 'created' NOT NULL,
+  "orderDirection" '"asc" | "desc"' DEFAULT 'asc' NOT NULL,
+  "status" 'String_of<StatusType[]>',
+  "priority" 'String_of<PriorityType[]>',
+  "query" TEXT
+);
