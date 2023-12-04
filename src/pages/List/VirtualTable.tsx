@@ -4,17 +4,17 @@ import css from "./VirtualTable.module.css";
 /**
  * - over-scan on rows
  * - keep track of offset start for row set
- * 
+ *
  * "fetchNextPage(startIndex, startCursor)"
  * page: startIndex
- * 
+ *
  * fetchNextPage can over-scan to pull in before window and after window items.
  * 2 windows worth of items?
  * Half window before and half window after?
  * Or 3 windows worth of items?
- * 
- * @param param0 
- * @returns 
+ *
+ * @param param0
+ * @returns
  */
 function VirtualTableBase<T>({
   rowRenderer,
@@ -39,8 +39,8 @@ function VirtualTableBase<T>({
   onNextPage: () => void;
   onPrevPage: () => void;
   loading: boolean;
-  hasPrevPage: boolean,
-  hasNextPage: boolean
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
   rowRenderer: (
     row: T,
     style: { [key: string]: string | number }
@@ -61,7 +61,7 @@ function VirtualTableBase<T>({
 
     // height -> height of container w/o scrolling
     const bottom =
-      target.scrollHeight - target.scrollTop <= height / 3;
+      target.scrollHeight - target.scrollTop <= height + height / 3;
     const top = target.scrollTop <= height / 3;
     if (bottom && hasNextPage && !loading) {
       onNextPage();
@@ -154,7 +154,9 @@ function VirtualTableBase<T>({
     if (!d) {
       break;
     }
-    renderedRows.push(rowRenderer(d, { height: rh, top: i * rh  - offset, position: 'absolute' }));
+    renderedRows.push(
+      rowRenderer(d, { height: rh, top: i * rh - offset, position: "absolute" })
+    );
   }
 
   return (
