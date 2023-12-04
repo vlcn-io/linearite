@@ -137,7 +137,7 @@ function VirtualTableBase<T>({
   let bottom = Math.ceil((y + vp + buffer) / rh);
 
   // top index for items in the viewport
-  top = Math.max(0, top);
+  top = Math.max(startIndex, top);
   // bottom index for items in the viewport
   bottom = Math.min(th / rh, bottom);
 
@@ -155,7 +155,11 @@ function VirtualTableBase<T>({
       break;
     }
     renderedRows.push(
-      rowRenderer(d, { height: rh, top: i * rh - offset, position: "absolute" })
+      rowRenderer(d, {
+        height: rh,
+        top: (i - startIndex) * rh - offset,
+        position: "absolute",
+      })
     );
   }
 
