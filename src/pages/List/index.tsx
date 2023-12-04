@@ -16,7 +16,7 @@ function List({ showSearch = false }) {
   const [cursor, setCursor] = useState<Issue | null>(null);
   const [indexOffset, setIndexOffset] = useState(0);
   const limit = pageSize * 3;
-  const issues$ = useQuery2(ctx, queries.listIssues(filterState, null), [
+  const issues$ = useQuery2(ctx, queries.listIssues(filterState, cursor), [
     limit,
   ]);
   const filteredIssuesCount =

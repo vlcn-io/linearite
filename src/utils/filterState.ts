@@ -33,10 +33,11 @@ export function filterStateToWhere(
     if (where !== orig) {
       where += " AND ";
     }
-    where += `("${filterState.orderBy}" > '${cursor[filterState.orderBy]}'
+    const op = filterState.orderDirection === "asc" ? ">" : "<";
+    where += `("${filterState.orderBy}" ${op} '${cursor[filterState.orderBy]}'
       OR (
         ${filterState.orderBy} = '${cursor[filterState.orderBy]}' AND
-        id > '${cursor.id}'
+        id ${op} '${cursor.id}'
       )
     )`;
   }
