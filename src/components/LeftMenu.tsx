@@ -16,6 +16,11 @@ import AboutModal from './AboutModal'
 import IssueModal from './IssueModal'
 import ItemGroup from './ItemGroup'
 import ProfileMenu from './ProfileMenu'
+import { mutations } from '../domain/mutations'
+import { DBName } from '../domain/Schema'
+import { first, useDB, useQuery2 } from '@vlcn.io/react'
+import { decodeFilterState } from '../domain/SchemaType'
+import { queries } from '../domain/queries'
 
 // eslint-disable-next-line react-refresh/only-export-components
 function LeftMenu() {
@@ -26,6 +31,8 @@ function LeftMenu() {
   const { showMenu, setShowMenu } = useContext(MenuContext)!
   // const { connectivityState } = useConnectivityState()
   const connectivityState = 'connected'
+  const ctx = useDB(DBName)
+  const filterState = decodeFilterState(first(useQuery2(ctx, queries.filterState).data))
 
   const classes = classnames(
     'absolute z-40 lg:static inset-0 transform duration-300 lg:relative lg:translate-x-0 bg-white flex flex-col flex-shrink-0 w-56 font-sans text-sm text-gray-700 border-r border-gray-100 lg:shadow-none justify-items-start',
@@ -97,19 +104,29 @@ function LeftMenu() {
               <IssuesIcon className="w-3.5 h-3.5 mr-2" />
               <span>All Issues</span>
             </Link>
-            <Link
-              to="/?status=todo,in_progress"
+            <span
+              onClick={() => {
+                mutations.putFilterState(ctx.db, {
+                  ...filterState,
+                  status: ['todo', 'in_progress'],
+                });
+              }}
               className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100"
             >
               <span className="w-3.5 h-6 mr-2 inline-block">
                 <span className="block w-2 h-full border-r"></span>
               </span>
               <span>Active</span>
-            </Link>
-            <Link to="/?status=backlog" className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100">
+            </span>
+            <span onClick={() => {
+                mutations.putFilterState(ctx.db, {
+                  ...filterState,
+                  status: ['backlog'],
+                });
+              }} className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100">
               <BacklogIcon className="w-3.5 h-3.5 mr-2" />
               <span>Backlog</span>
-            </Link>
+            </span>
             <Link to="/board" className="flex items-center pl-6 rounded cursor-pointer h-7 hover:bg-gray-100">
               <BoardIcon className="w-3.5 h-3.5 mr-2" />
               <span>Board</span>

@@ -17,7 +17,7 @@ export function filterStateToWhere(filterState: DecodedFilterState, cursor: Issu
     // TODO: description search too?
     // TODO: FTS5
     if (where !== orig) {
-      where += ' OR '
+      where += ' AND '
     }
     where += `TITLE LIKE '%${query}%'`
   }
