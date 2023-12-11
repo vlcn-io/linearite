@@ -1,85 +1,87 @@
-import { useNavigate, useParams } from 'react-router-dom'
-import { useState, useCallback } from 'react'
-import { BsTrash3 as DeleteIcon } from 'react-icons/bs'
-import { BsXLg as CloseIcon } from 'react-icons/bs'
-import PriorityMenu from '../../components/contextmenu/PriorityMenu'
-import StatusMenu from '../../components/contextmenu/StatusMenu'
-import PriorityIcon from '../../components/PriorityIcon'
-import StatusIcon from '../../components/StatusIcon'
-import Avatar from '../../components/Avatar'
-import { PriorityDisplay, StatusDisplay } from '../../types/issue'
-import Editor from '../../components/editor/Editor'
-import DeleteModal from './DeleteModal'
-import Comments from './Comments'
-import { DBName } from '../../domain/Schema'
-import { first, useDB, useQuery2 } from '@vlcn.io/react'
-import { queries } from '../../domain/queries'
-import { mutations } from '../../domain/mutations'
-import { PriorityType, StatusType } from '../../domain/SchemaType'
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { BsTrash3 as DeleteIcon } from "react-icons/bs";
+import { BsXLg as CloseIcon } from "react-icons/bs";
+import PriorityMenu from "../../components/contextmenu/PriorityMenu";
+import StatusMenu from "../../components/contextmenu/StatusMenu";
+import PriorityIcon from "../../components/PriorityIcon";
+import StatusIcon from "../../components/StatusIcon";
+import Avatar from "../../components/Avatar";
+import { PriorityDisplay, StatusDisplay } from "../../types/issue";
+import Editor from "../../components/editor/Editor";
+import DeleteModal from "./DeleteModal";
+import Comments from "./Comments";
+import { DBName } from "../../domain/Schema";
+import { first, useDB, useQuery2 } from "@vlcn.io/react";
+import { queries } from "../../domain/queries";
+import { mutations } from "../../domain/mutations";
+import { PriorityType, StatusType } from "../../domain/SchemaType";
 
 function IssuePage() {
-  const navigate = useNavigate()
-  const { id } = useParams() || ''
+  const navigate = useNavigate();
+  const { id } = useParams() || "";
 
-  const ctx = useDB(DBName)
-  const issue = first(useQuery2(ctx, queries.issue, [id]).data)
-  const description = first(useQuery2(ctx, queries.issueDescription, [id]).data)?.body
+  const ctx = useDB(DBName);
+  const issue = first(useQuery2(ctx, queries.issue, [id]).data);
+  const description = first(
+    useQuery2(ctx, queries.issueDescription, [id]).data
+  )?.body;
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   if (issue === undefined) {
-    return <div className="p-8 w-full text-center">Loading...</div>
+    return <div className="p-8 w-full text-center">Loading...</div>;
   } else if (issue === null) {
-    return <div className="p-8 w-full text-center">Issue not found</div>
+    return <div className="p-8 w-full text-center">Issue not found</div>;
   }
 
   const handleStatusChange = (status: StatusType) => {
     mutations.updateIssue(ctx.db, {
       id: issue.id,
       status,
-    })
-  }
+    });
+  };
 
   const handlePriorityChange = (priority: PriorityType) => {
     mutations.updateIssue(ctx.db, {
       id: issue.id,
       priority,
-    })
-  }
+    });
+  };
 
   const handleTitleChange = (title: string) => {
     mutations.updateIssue(ctx.db, {
       id: issue.id,
       title,
-    })
-  }
+    });
+  };
 
   const handleDescriptionChange = (body: string) => {
     mutations.updateDescription(ctx.db, {
       id: issue.id,
       body,
-    })
-  }
+    });
+  };
 
   const handleDelete = async () => {
-    await mutations.deleteIssue(ctx.db, issue.id)
-    handleClose()
-  }
+    await mutations.deleteIssue(ctx.db, issue.id);
+    handleClose();
+  };
 
   const handleClose = () => {
     if (window.history.length > 2) {
-      navigate(-1)
+      navigate(-1);
     }
-    navigate('/')
-  }
+    navigate("/");
+  };
 
   const shortId = () => {
-    if (issue.id.includes('-')) {
-      return issue.id.slice(issue.id.length - 8)
-    } else {
-      return issue.id
-    }
-  }
+    // if (issue.id.includes('-')) {
+    //   return issue.id.slice(issue.id.length - 8)
+    // } else {
+    return issue.id;
+    // }
+  };
 
   return (
     <>
@@ -94,10 +96,16 @@ function IssuePage() {
             </div>
 
             <div className="flex items-center">
-              <button className="p-2 rounded hover:bg-gray-100" onClick={() => setShowDeleteModal(true)}>
+              <button
+                className="p-2 rounded hover:bg-gray-100"
+                onClick={() => setShowDeleteModal(true)}
+              >
                 <DeleteIcon size={14} />
               </button>
-              <button className="ms-2 p-2 rounded hover:bg-gray-100" onClick={handleClose}>
+              <button
+                className="ms-2 p-2 rounded hover:bg-gray-100"
+                onClick={handleClose}
+              >
                 <CloseIcon size={14} />
               </button>
             </div>
@@ -109,7 +117,9 @@ function IssuePage() {
           <div className="md:block flex md:flex-[1_0_0] min-w-0 md:p-3 md:order-2">
             <div className="max-w-4xl flex flex-row md:flex-col">
               <div className="flex flex-1 mb-3 mr-5 md-mr-0">
-                <div className="flex flex-[2_0_0] mr-2 md-mr-0 items-center">Opened by</div>
+                <div className="flex flex-[2_0_0] mr-2 md-mr-0 items-center">
+                  Opened by
+                </div>
                 <div className="flex flex-[3_0_0]">
                   <button className="inline-flex items-center h-6 ps-1.5 pe-2 text-gray-500border-none rounded hover:bg-gray-100">
                     <Avatar name={issue.creator ?? undefined} />
@@ -118,10 +128,12 @@ function IssuePage() {
                 </div>
               </div>
               <div className="flex flex-1 mb-3 mr-5 md-mr-0">
-                <div className="flex flex-[2_0_0] mr-2 md-mr-0 items-center">Status</div>
+                <div className="flex flex-[2_0_0] mr-2 md-mr-0 items-center">
+                  Status
+                </div>
                 <div className="flex flex-[3_0_0]">
                   <StatusMenu
-                    id={'issue-status-' + issue.id}
+                    id={"issue-status-" + issue.id}
                     button={
                       <button className="inline-flex items-center h-6 px-2 text-gray-500border-none rounded hover:bg-gray-100">
                         <StatusIcon status={issue.status} className="mr-1" />
@@ -133,13 +145,18 @@ function IssuePage() {
                 </div>
               </div>
               <div className="flex flex-1 mb-3 mr-5 md-mr-0">
-                <div className="flex flex-[2_0_0] mr-2 md-mr-0 items-center">Priority</div>
+                <div className="flex flex-[2_0_0] mr-2 md-mr-0 items-center">
+                  Priority
+                </div>
                 <div className="flex flex-[3_0_0]">
                   <PriorityMenu
-                    id={'issue-priority-' + issue.id}
+                    id={"issue-priority-" + issue.id}
                     button={
                       <button className="inline-flex items-center h-6 px-2 text-gray-500 border-none rounded hover:bg-gray-100 hover:text-gray-700">
-                        <PriorityIcon priority={issue.priority} className="mr-1" />
+                        <PriorityIcon
+                          priority={issue.priority}
+                          className="mr-1"
+                        />
                         <span>{PriorityDisplay[issue.priority]}</span>
                       </button>
                     }
@@ -159,7 +176,7 @@ function IssuePage() {
 
             <Editor
               className="prose w-full max-w-full mt-2 font-normal appearance-none min-h-12 p-3 text-md rounded editor"
-              value={description || ''}
+              value={description || ""}
               onChange={(val) => handleDescriptionChange(val)}
               placeholder="Add description..."
             />
@@ -178,7 +195,7 @@ function IssuePage() {
         deleteIssue={handleDelete}
       />
     </>
-  )
+  );
 }
 
-export default IssuePage
+export default IssuePage;

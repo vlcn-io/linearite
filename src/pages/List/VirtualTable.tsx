@@ -49,6 +49,10 @@ function VirtualTableBase<T>({
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (loading) {
+      e.preventDefault();
+      return false;
+    }
     const target = e.target as HTMLElement;
     const scrollTop = target.scrollTop;
     setScrollTop(scrollTop);
@@ -60,12 +64,17 @@ function VirtualTableBase<T>({
     }
 
     // height -> height of container w/o scrolling
-    const bottom =
-      target.scrollHeight - target.scrollTop <= height + height / 3;
-    const top = target.scrollTop <= height / 3;
-    if (bottom && hasNextPage && !loading) {
+    // if bottom is in the last 1/3rd of items
+    const loadedItems = rows.length;
+    const lastThirdIndex = Math.floor(loadedItems * (2 / 3));
+    const firstThirdIndex = Math.floor(loadedItems * (1 / 3));
+    const idx = Math.floor((scrollTop + offset + vp) / rh);
+    console.log(`Index: ${idx}, Last third: ${lastThirdIndex}`);
+    if (hasNextPage && !loading && idx - startIndex > lastThirdIndex) {
+      console.log(`Last third index: ${lastThirdIndex}`);
+      console.log(`idx: ${idx} - Start: ${startIndex}`);
       onNextPage();
-    } else if (top && hasPrevPage && !loading) {
+    } else if (hasPrevPage && !loading && idx - startIndex < firstThirdIndex) {
       onPrevPage();
     }
   };
@@ -142,6 +151,10 @@ function VirtualTableBase<T>({
   bottom = Math.min(th / rh, bottom);
 
   const renderedRows = [];
+  // console.log("Start IDX: " + startIndex);
+  // console.log("Num rows: " + rows.length);
+  // console.log("First row: " + (rows[0] as any)?.id);
+  // console.log("Last row: " + (rows[rows.length - 1] as any)?.id);
   for (let i = top; i <= bottom; ++i) {
     // offset our index into `rows` by `startIndex`
     // `onNextPage` would fetch next page from
@@ -157,7 +170,7 @@ function VirtualTableBase<T>({
     renderedRows.push(
       rowRenderer(d, {
         height: rh,
-        top: (i - startIndex) * rh - offset,
+        top: i * rh - offset,
         position: "absolute",
       })
     );
