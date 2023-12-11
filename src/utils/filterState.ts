@@ -2,7 +2,8 @@ import { DecodedFilterState, Issue } from "../domain/SchemaType";
 
 export function filterStateToWhere(
   filterState: DecodedFilterState,
-  cursor: Issue | null
+  cursor: Issue | null,
+  backwardFetch: boolean = false
 ) {
   const { status, priority, query } = filterState;
   let where = "WHERE ";
@@ -33,7 +34,12 @@ export function filterStateToWhere(
     if (where !== orig) {
       where += " AND ";
     }
-    const op = filterState.orderDirection === "asc" ? ">" : "<";
+    let direction = filterState.orderDirection;
+    if (backwardFetch) {
+      direction = direction === "asc" ? "desc" : "asc";
+    }
+    const op = direction === "asc" ? ">" : "<";
+
     where += `("${filterState.orderBy}" ${op} '${cursor[filterState.orderBy]}'
       OR (
         ${filterState.orderBy} = '${cursor[filterState.orderBy]}' AND
@@ -49,9 +55,16 @@ export function filterStateToWhere(
   return where;
 }
 
-export function filterStateToOrder(filterState: DecodedFilterState) {
+export function filterStateToOrder(
+  filterState: DecodedFilterState,
+  backwardFetch: boolean = false
+) {
+  let direction = filterState.orderDirection;
+  if (backwardFetch) {
+    direction = direction === "asc" ? "desc" : "asc";
+  }
   if (filterState.orderBy) {
-    return `ORDER BY ${filterState.orderBy} ${filterState.orderDirection}`;
+    return `ORDER BY ${filterState.orderBy} ${direction}`;
   }
 
   return "";

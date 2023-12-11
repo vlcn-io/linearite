@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import css from "./VirtualTable.module.css";
 
 /**
@@ -22,6 +22,7 @@ function VirtualTableBase<T>({
   height,
   rowHeight,
   rows,
+  totalRows,
   startIndex,
   onNextPage,
   onPrevPage,
@@ -35,6 +36,7 @@ function VirtualTableBase<T>({
   height: number;
   rowHeight: number;
   rows: readonly T[];
+  totalRows: number;
   startIndex: number;
   onNextPage: () => void;
   onPrevPage: () => void;
@@ -49,11 +51,13 @@ function VirtualTableBase<T>({
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
     if (loading) {
+      console.log(`DRAG SCROLL WHILE LOADING!?`);
       e.preventDefault();
+      target.scrollTop = prevScrollTop;
       return false;
     }
-    const target = e.target as HTMLElement;
     const scrollTop = target.scrollTop;
     setScrollTop(scrollTop);
 
@@ -63,18 +67,17 @@ function VirtualTableBase<T>({
       onNearScroll();
     }
 
-    // height -> height of container w/o scrolling
-    // if bottom is in the last 1/3rd of items
+    // TODO: Need to clamp the scroll to not jump ahead more than the items loaded.
+
     const loadedItems = rows.length;
     const lastThirdIndex = Math.floor(loadedItems * (2 / 3));
     const firstThirdIndex = Math.floor(loadedItems * (1 / 3));
     const idx = Math.floor((scrollTop + offset + vp) / rh);
-    console.log(`Index: ${idx}, Last third: ${lastThirdIndex}`);
     if (hasNextPage && !loading && idx - startIndex > lastThirdIndex) {
-      console.log(`Last third index: ${lastThirdIndex}`);
-      console.log(`idx: ${idx} - Start: ${startIndex}`);
+      setPrevScrollTop(scrollTop);
       onNextPage();
     } else if (hasPrevPage && !loading && idx - startIndex < firstThirdIndex) {
+      setPrevScrollTop(scrollTop);
       onPrevPage();
     }
   };
@@ -121,7 +124,7 @@ function VirtualTableBase<T>({
     }
   }
 
-  const items = rows.length + startIndex;
+  const items = totalRows;
   const itemSize = rowHeight;
   const th = items * itemSize;
   const h = 33554400;
@@ -139,6 +142,21 @@ function VirtualTableBase<T>({
   const [scrollTop, setScrollTop] = useState(
     tableContainerRef.current?.scrollTop || 0
   );
+  const [lastLoading, setLastLoading] = useState(loading);
+  if (lastLoading !== loading) {
+    setLastLoading(loading);
+  }
+  // useEffect(() => {
+  //   const current = tableContainerRef.current;
+  //   if (!current) {
+  //     return;
+  //   }
+
+  //   current.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     current.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, [tableContainerRef.current, handleScroll]);
 
   const buffer = vp;
   const y = scrollTop + offset;
@@ -151,18 +169,7 @@ function VirtualTableBase<T>({
   bottom = Math.min(th / rh, bottom);
 
   const renderedRows = [];
-  // console.log("Start IDX: " + startIndex);
-  // console.log("Num rows: " + rows.length);
-  // console.log("First row: " + (rows[0] as any)?.id);
-  // console.log("Last row: " + (rows[rows.length - 1] as any)?.id);
   for (let i = top; i <= bottom; ++i) {
-    // offset our index into `rows` by `startIndex`
-    // `onNextPage` would fetch next page from
-    // some offset into the current row set.
-    // startIndex would be that offset...
-    // startIndex grows, however, as we scroll down.
-    // First re-fetch start index is 1/3rd of the way down.
-    // We're fetching 3x the number of rows we need to display.
     const d = rows[i - startIndex];
     if (!d) {
       break;

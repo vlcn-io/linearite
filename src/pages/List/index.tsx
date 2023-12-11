@@ -4,7 +4,7 @@ import { Issue, decodeFilterState } from "../../domain/SchemaType";
 import { first, useDB, useQuery2 } from "@vlcn.io/react";
 import { queries } from "../../domain/queries";
 import { DBName } from "../../domain/Schema";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 function List({ showSearch = false }) {
   const ctx = useDB(DBName);
@@ -14,11 +14,14 @@ function List({ showSearch = false }) {
   // TODO: observe window height and update limit
   const pageSize = Math.floor(window.innerHeight / ROW_HEIGHT);
   const [cursor, setCursor] = useState<Issue | null>(null);
+  const [backwardFetch, setBackwardFetch] = useState(false);
   const [indexOffset, setIndexOffset] = useState(0);
   const limit = pageSize * 3;
-  const issues$ = useQuery2(ctx, queries.listIssues(filterState, cursor), [
-    limit,
-  ]);
+  const issues$ = useQuery2(
+    ctx,
+    queries.listIssues(filterState, cursor, backwardFetch),
+    [limit]
+  );
   const filteredIssuesCount =
     first(useQuery2(ctx, queries.filteredIssueCount(filterState)).data)?.c ?? 0;
   const hasPrevPage = indexOffset > 0;
@@ -31,6 +34,7 @@ function List({ showSearch = false }) {
     // Fetch limit amount of issues
     // starting at indexOffset + pageSize cursor
     const newOffset = indexOffset + pageSize;
+    setBackwardFetch(false);
     setCursor(issues$.data[pageSize - 1]);
     setIndexOffset(newOffset);
   }
@@ -41,11 +45,19 @@ function List({ showSearch = false }) {
     }
     // Fetch limit amount of issues
     // starting at indexOffset - pageSize cursor
-    // const newOffset = indexOffset - pageSize;
+    const newOffset = Math.max(indexOffset - pageSize, 0);
     // // We need to indicate this is a backwards fetch...
-    // setCursor(issues$.data[issues$.data.length - pageSize]);
-    // setIndexOffset(newOffset);
+    setBackwardFetch(true);
+    setCursor(issues$.data[issues$.data.length - pageSize]);
+    setIndexOffset(newOffset);
   }
+
+  const rows = useMemo(() => {
+    if (backwardFetch) {
+      return issues$.data.concat().reverse();
+    }
+    return issues$.data;
+  }, [issues$.data, backwardFetch]);
 
   return (
     <div className="flex flex-col flex-grow">
@@ -54,13 +66,14 @@ function List({ showSearch = false }) {
         showSearch={showSearch}
       />
       <IssueList
-        issues={issues$.data}
+        issues={rows}
         hasNextPage={hasNextPage}
         hasPrevPage={hasPrevPage}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
         loading={issues$.loading}
         startIndex={indexOffset}
+        totalRows={filteredIssuesCount}
       />
     </div>
   );
