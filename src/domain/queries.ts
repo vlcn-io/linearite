@@ -55,19 +55,13 @@ export const queries = {
   }>`SELECT * FROM issue WHERE id = ?`,
 
   filterState: S.sql<{
-    id: "singleton";
-    orderBy:
-      | "title"
-      | "creator"
-      | "priority"
-      | "status"
-      | "created"
-      | "modified";
-    orderDirection: "asc" | "desc";
-    status: String_of<StatusType[]> | null;
-    priority: String_of<PriorityType[]> | null;
-    query: string | null;
-  }>`SELECT * FROM filter_state`,
+  id: "singleton";
+  orderBy: "title" | "creator" | "priority" | "status" | "created" | "modified";
+  orderDirection: "asc" | "desc";
+  status: String_of<StatusType[]> | null;
+  priority: String_of<PriorityType[]> | null;
+  query: string | null
+}>`SELECT * FROM filter_state`,
 
   issueDescription: S.sql<{
     id: ID_of<Issue>;

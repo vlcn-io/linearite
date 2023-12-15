@@ -40,17 +40,17 @@ server.listen(PORT, () =>
 ViteExpress.bind(app, server);
 
 /**
- * 
- * @param {import("better-sqlite3").Database} db 
- * @returns 
+ *
+ * @param {import("better-sqlite3").Database} db
+ * @returns
  */
 async function seedDB(db) {
   const existing = db.prepare(`SELECT * FROM issue`).all();
   if (existing.length > 0) {
-    console.log('db already seeded')
+    console.log("db already seeded");
     return;
   }
-  console.log('Seeding DB');
+  console.log("Seeding DB");
 
   const createIssueStmt = db.prepare(
     `INSERT INTO issue
@@ -64,10 +64,22 @@ async function seedDB(db) {
   db.transaction(() => {
     let i = 0;
     for (const [issue, description] of createIssues(7000)) {
-      createIssueStmt.run(issue.id, issue.title, issue.creator, issue.priority, issue.status, issue.created, issue.modified, issue.kanbanorder);
+      if (++i % 1000 === 0) {
+        console.log("Seeded", i, "issues");
+      }
+      createIssueStmt.run(
+        issue.id,
+        issue.title,
+        issue.creator,
+        issue.priority,
+        issue.status,
+        issue.created,
+        issue.modified,
+        issue.kanbanorder
+      );
       createDescriptionStmt.run(description.id, description.body);
     }
   })();
 
-  console.log('Done seeding DB');
+  console.log("Done seeding DB");
 }

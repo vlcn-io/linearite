@@ -1,11 +1,11 @@
-import { SchemaType } from './SchemaType.js'
-import { schema } from '@vlcn.io/typed-sql'
-import { nanoid } from 'nanoid';
-import {ID_of} from '@vlcn.io/id';
+import { SchemaType } from "./SchemaType.js";
+import { schema } from "@vlcn.io/typed-sql";
+import { nanoid } from "nanoid";
+import { ID_of } from "@vlcn.io/id";
 
-export const SchemaName = 'Schema.sql'
+export const SchemaName = "Schema.sql";
 // DB name does not need to be static by any means. See other example apps and the vite-start for dynamic db names.
-export const DBName = 'linear';
+export const DBName = "linear";
 export function newID<T>(): ID_of<T> {
   return nanoid() as ID_of<T>;
 }
@@ -21,6 +21,10 @@ CREATE TABLE IF NOT EXISTS issue (
   "modified" INTEGER NOT NULL DEFAULT 0,
   "kanbanorder"
 );
+
+CREATE INDEX IF NOT EXISTS "issue_kanbanorder_idx" ON "issue" ("kanbanorder");
+CREATE INDEX IF NOT EXISTS "modified_idx" ON "issue" ("modified");
+CREATE INDEX IF NOT EXISTS "created_idx" ON "issue" ("created");
 
 SELECT crsql_fract_as_ordered('issue', 'kanbanorder');
 SELECT crsql_as_crr('issue');
@@ -48,4 +52,4 @@ CREATE TABLE IF NOT EXISTS "filter_state" (
   "priority" 'String_of<PriorityType[]>',
   "query" TEXT
 );
-`
+`;
