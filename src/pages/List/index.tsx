@@ -48,7 +48,14 @@ function List({ showSearch = false }) {
     const newOffset = Math.max(indexOffset - pageSize, 0);
     // // We need to indicate this is a backwards fetch...
     setBackwardFetch(true);
-    setCursor(issues$.data[issues$.data.length - pageSize]);
+    const crsr = issues$.data[Math.max(issues$.data.length - pageSize, 0)];
+    // we have to fetch 2 sides of the cursor
+    // if newOffset is < pagesize * 3 :/
+    // fulfill from backwards and fulfill from forwards
+    // offset pagination is our other option.
+    // always paging forward using an offset.
+    // or if less than just fast forward to the beginning?
+    setCursor(crsr);
     setIndexOffset(newOffset);
   }
 

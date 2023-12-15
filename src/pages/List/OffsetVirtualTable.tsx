@@ -2,20 +2,24 @@ import React, { memo, useState } from "react";
 import css from "./VirtualTable.module.css";
 
 /**
- * - over-scan on rows
- * - keep track of offset start for row set
+ * Same as `VirtualTable` but uses offset pagination.
  *
- * "fetchNextPage(startIndex, startCursor)"
- * page: startIndex
+ * Offset pagination isn't terribly efficient for SQLite but there are ways around this:
+ * 1. Creating a temp table to index the offsets
+ * 2. Using cursor as a hint to find the offset?
  *
- * fetchNextPage can over-scan to pull in before window and after window items.
- * 2 windows worth of items?
- * Half window before and half window after?
- * Or 3 windows worth of items?
+ * Offset pagination works fine in Materialite since our treap knows indices.
  *
- * @param param0
- * @returns
+ * Offset pagination is in some ways a requirement. If the user wants to drag and scroll,
+ * well how do we jump to where they dragged? We can't do this with a cursor since we don't know the
+ * cursor at an arbitrary position. We can do it with offset pagination though.
+ *
+ * The ideal world is probably some combination of offset pagination and cursor pagination.
+ * Cursor when we can, offset when we can't.
+ *
+ * We will only re-fetch if we scroll into or beyond our over-scan region.
  */
+
 function VirtualTableBase<T>({
   rowRenderer,
   width,
@@ -38,8 +42,8 @@ function VirtualTableBase<T>({
   rows: readonly T[];
   totalRows: number;
   startIndex: number;
-  onNextPage: () => void;
-  onPrevPage: () => void;
+  onNextPage: (offset: number) => void;
+  onPrevPage: (offset: number) => void;
   loading: boolean;
   hasPrevPage: boolean;
   hasNextPage: boolean;
@@ -70,8 +74,6 @@ function VirtualTableBase<T>({
 
     const scrollDirection = scrollTop - prevScrollTop > 0 ? "down" : "up";
 
-    // TODO: Need to clamp the scroll to not jump ahead more than the items loaded.
-
     const loadedItems = rows.length;
     const lastThirdIndex = Math.floor(loadedItems * (2 / 3));
     const firstThirdIndex = Math.floor(loadedItems * (1 / 3));
@@ -83,21 +85,14 @@ function VirtualTableBase<T>({
       !loading &&
       bottomIdx - startIndex > lastThirdIndex
     ) {
-      const pos = (lastThirdIndex + startIndex) * rh - offset - vp;
-      target.scrollTop = pos;
-      setPrevScrollTop(pos);
-      onNextPage();
+      onNextPage(bottomIdx);
     } else if (
       scrollDirection === "up" &&
       hasPrevPage &&
       !loading &&
       topIdx - startIndex < firstThirdIndex
     ) {
-      console.log("LOADING PREV PAGE");
-      const pos = (firstThirdIndex + startIndex) * rh - offset;
-      target.scrollTop = pos;
-      setPrevScrollTop(pos);
-      onPrevPage();
+      onPrevPage(topIdx);
     }
   };
 

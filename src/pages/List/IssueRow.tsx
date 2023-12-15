@@ -42,6 +42,7 @@ function IssueRow({ issue, style }: Props) {
       onClick={() => navigate(`/issue/${issue.id}`)}
       style={style}
     >
+      <div className="flex-shrink-0">{issue.id}</div>
       <div className="flex-shrink-0 ml-4">
         <PriorityMenu
           id={"r-priority-" + issue.id}

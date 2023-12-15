@@ -98,6 +98,7 @@ export function* createIssues(numTasks) {
     const [title, description] = generateText();
     const task = {
       id: nanoid(),
+      // id: ++issueId,
       creator: getRandomItem(names),
       title,
       created: Date.now() - i * 5 * 24 * 60 * 60 * 1000,
