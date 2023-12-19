@@ -12,7 +12,7 @@ import Editor from "../../components/editor/Editor";
 import DeleteModal from "./DeleteModal";
 import Comments from "./Comments";
 import { DBName } from "../../domain/Schema";
-import { first, useDB, useQuery2 } from "@vlcn.io/react";
+import { first, useCachedState, useDB, useQuery2 } from "@vlcn.io/react";
 import { queries } from "../../domain/queries";
 import { mutations } from "../../domain/mutations";
 import { PriorityType, StatusType } from "../../domain/SchemaType";
@@ -28,6 +28,7 @@ function IssuePage() {
   )?.body;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [title, setTitle] = useCachedState(issue?.title || "");
 
   if (issue === undefined) {
     return <div className="p-8 w-full text-center">Loading...</div>;
@@ -50,6 +51,7 @@ function IssuePage() {
   };
 
   const handleTitleChange = (title: string) => {
+    setTitle(title);
     mutations.updateIssue(ctx.db, {
       id: issue.id,
       title,
@@ -170,7 +172,7 @@ function IssuePage() {
             <input
               className="w-full px-3 py-1 text-lg font-semibold placeholder-gray-400 border-transparent rounded "
               placeholder="Issue title"
-              value={issue.title ?? undefined}
+              value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
             />
 
