@@ -42,6 +42,14 @@ export function* createIssues(numTasks) {
     "Enhance",
     "Optimize",
     "Fix",
+    "Remove",
+    "Mock",
+    "Update",
+    "Document",
+    "Deploy",
+    "Revert",
+    "Add",
+    "Destroy",
   ];
   const featurePhrases = [
     "the login mechanism",
@@ -54,6 +62,15 @@ export function* createIssues(numTasks) {
     "responsive layouts",
     "error handling logic",
     "the navigation menu",
+    "the search functionality",
+    "the onboarding flow",
+    "the user profile page",
+    "the admin dashboard",
+    "the billing system",
+    "the payment gateway",
+    "the user permissions",
+    "the user roles",
+    "the user management",
   ];
   const purposePhrases = [
     "to improve user experience",
@@ -66,6 +83,15 @@ export function* createIssues(numTasks) {
     "to comply with new regulations",
     "to reflect customer feedback",
     "to keep up with platform changes",
+    "to improve overall performance",
+    "to fix a critical bug",
+    "to add a new feature",
+    "to remove deprecated code",
+    "to improve code readability",
+    "to fix a security vulnerability",
+    "to improve SEO",
+    "to improve accessibility",
+    "to improve the codebase",
   ];
   const contextPhrases = [
     "Based on the latest UX research",
