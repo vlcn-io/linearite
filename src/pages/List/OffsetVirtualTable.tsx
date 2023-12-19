@@ -28,8 +28,7 @@ function VirtualTableBase<T>({
   rows,
   totalRows,
   startIndex,
-  onNextPage,
-  onPrevPage,
+  onPage,
   hasNextPage,
   hasPrevPage,
   loading,
@@ -42,8 +41,7 @@ function VirtualTableBase<T>({
   rows: readonly T[];
   totalRows: number;
   startIndex: number;
-  onNextPage: (offset: number) => void;
-  onPrevPage: (offset: number) => void;
+  onPage: (offset: number) => void;
   loading: boolean;
   hasPrevPage: boolean;
   hasNextPage: boolean;
@@ -56,14 +54,16 @@ function VirtualTableBase<T>({
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    if (loading) {
-      // TODO (mlaw):
-      // allow scrolling while loading if we're inside the over-scan window.
-      e.preventDefault();
-      target.scrollTop = prevScrollTop;
-      return false;
-    }
     const scrollTop = target.scrollTop;
+    const bottomIdx = Math.floor((scrollTop + offset + vp) / rh);
+    const topIdx = Math.floor((scrollTop + offset) / rh);
+    if (loading) {
+      if (topIdx - startIndex < 0 || bottomIdx - startIndex > rows.length) {
+        e.preventDefault();
+        target.scrollTop = prevScrollTop;
+        return false;
+      }
+    }
     setScrollTop(scrollTop);
 
     if (Math.abs(scrollTop - prevScrollTop) > vp) {
@@ -75,24 +75,22 @@ function VirtualTableBase<T>({
     const scrollDirection = scrollTop - prevScrollTop > 0 ? "down" : "up";
 
     const loadedItems = rows.length;
-    const lastThirdIndex = Math.floor(loadedItems * (2 / 3));
-    const firstThirdIndex = Math.floor(loadedItems * (1 / 3));
-    const bottomIdx = Math.floor((scrollTop + offset + vp) / rh);
-    const topIdx = Math.floor((scrollTop + offset) / rh);
+    const lastSixthIndex = Math.floor(loadedItems * (5 / 6));
+    const firstSixthIndex = Math.floor(loadedItems * (1 / 6));
     if (
       scrollDirection === "down" &&
       hasNextPage &&
       !loading &&
-      bottomIdx - startIndex > lastThirdIndex
+      bottomIdx - startIndex > lastSixthIndex
     ) {
-      onNextPage(bottomIdx);
+      onPage(topIdx);
     } else if (
       scrollDirection === "up" &&
       hasPrevPage &&
       !loading &&
-      topIdx - startIndex < firstThirdIndex
+      topIdx - startIndex < firstSixthIndex
     ) {
-      onPrevPage(topIdx);
+      onPage(topIdx);
     }
   };
 
@@ -163,17 +161,6 @@ function VirtualTableBase<T>({
       tableContainerRef.current!.scrollTop = prevScrollTop;
     }
   }
-  // useEffect(() => {
-  //   const current = tableContainerRef.current;
-  //   if (!current) {
-  //     return;
-  //   }
-
-  //   current.addEventListener("scroll", handleScroll);
-  //   return () => {
-  //     current.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [tableContainerRef.current, handleScroll]);
 
   const buffer = vp;
   const y = scrollTop + offset;

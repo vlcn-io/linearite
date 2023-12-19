@@ -13,58 +13,24 @@ function List({ showSearch = false }) {
   );
   // TODO: observe window height and update limit
   const pageSize = Math.floor(window.innerHeight / ROW_HEIGHT);
-  const [cursor, setCursor] = useState<Issue | null>(null);
-  const [backwardFetch, setBackwardFetch] = useState(false);
   const [indexOffset, setIndexOffset] = useState(0);
   const limit = pageSize * 3;
-  const issues$ = useQuery2(
-    ctx,
-    queries.listIssues(filterState, cursor, backwardFetch),
-    [limit]
-  );
+  const issues$ = useQuery2(ctx, queries.listIssues(filterState), [
+    indexOffset,
+    limit,
+  ]);
   const filteredIssuesCount =
     first(useQuery2(ctx, queries.filteredIssueCount(filterState)).data)?.c ?? 0;
   const hasPrevPage = indexOffset > 0;
   const hasNextPage = filteredIssuesCount > indexOffset + issues$.data.length;
 
-  function onNextPage() {
+  // topIdx is the offset into the entire result set
+  function onPage(topIdx: number) {
     if (issues$.loading) {
       return;
     }
-    // Fetch limit amount of issues
-    // starting at indexOffset + pageSize cursor
-    const newOffset = indexOffset + pageSize;
-    setBackwardFetch(false);
-    setCursor(issues$.data[pageSize - 1]);
-    setIndexOffset(newOffset);
+    setIndexOffset(Math.max(topIdx - pageSize, 0));
   }
-
-  function onPrevPage() {
-    if (issues$.loading) {
-      return;
-    }
-    // Fetch limit amount of issues
-    // starting at indexOffset - pageSize cursor
-    const newOffset = Math.max(indexOffset - pageSize, 0);
-    // // We need to indicate this is a backwards fetch...
-    setBackwardFetch(true);
-    const crsr = issues$.data[Math.max(issues$.data.length - pageSize, 0)];
-    // we have to fetch 2 sides of the cursor
-    // if newOffset is < pagesize * 3 :/
-    // fulfill from backwards and fulfill from forwards
-    // offset pagination is our other option.
-    // always paging forward using an offset.
-    // or if less than just fast forward to the beginning?
-    setCursor(crsr);
-    setIndexOffset(newOffset);
-  }
-
-  const rows = useMemo(() => {
-    if (backwardFetch) {
-      return issues$.data.concat().reverse();
-    }
-    return issues$.data;
-  }, [issues$.data, backwardFetch]);
 
   return (
     <div className="flex flex-col flex-grow">
@@ -73,11 +39,10 @@ function List({ showSearch = false }) {
         showSearch={showSearch}
       />
       <IssueList
-        issues={rows}
+        issues={issues$.data}
         hasNextPage={hasNextPage}
         hasPrevPage={hasPrevPage}
-        onNextPage={onNextPage}
-        onPrevPage={onPrevPage}
+        onPage={onPage}
         loading={issues$.loading}
         startIndex={indexOffset}
         totalRows={filteredIssuesCount}

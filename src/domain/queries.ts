@@ -18,29 +18,23 @@ export const queries = {
   }>`SELECT COUNT(*) AS c FROM issue`,
 
   filteredIssueCount: (filters: DecodedFilterState) =>
-    `SELECT count(*) as c FROM issue ${filterStateToWhere(
-      filters,
-      null
-    )}` as Query<{ c: number }>,
+    `SELECT count(*) as c FROM issue ${filterStateToWhere(filters)}` as Query<{
+      c: number;
+    }>,
 
-  boardIssues: (filters: DecodedFilterState, cursor: Issue | null) => {
+  boardIssues: (filters: DecodedFilterState) => {
     // TODO: page after cursor
     return `SELECT * FROM issue ${filterStateToWhere(
-      filters,
-      null
+      filters
     )} ORDER BY kanbanorder ASC` as Query<Issue>;
   },
 
-  listIssues: (
-    filters: DecodedFilterState,
-    cursor: Issue | null,
-    backwardFetch: boolean = false
-  ) => {
+  listIssues: (filters: DecodedFilterState) => {
     return `SELECT * FROM
       issue
-      ${filterStateToWhere(filters, cursor, backwardFetch)}
-      ${filterStateToOrder(filters, backwardFetch)}
-      LIMIT ?` as Query<Issue>;
+      ${filterStateToWhere(filters)}
+      ${filterStateToOrder(filters)}
+      LIMIT ?,?` as Query<Issue>;
   },
 
   issue: S.sql<{
@@ -55,13 +49,19 @@ export const queries = {
   }>`SELECT * FROM issue WHERE id = ?`,
 
   filterState: S.sql<{
-  id: "singleton";
-  orderBy: "title" | "creator" | "priority" | "status" | "created" | "modified";
-  orderDirection: "asc" | "desc";
-  status: String_of<StatusType[]> | null;
-  priority: String_of<PriorityType[]> | null;
-  query: string | null
-}>`SELECT * FROM filter_state`,
+    id: "singleton";
+    orderBy:
+      | "title"
+      | "creator"
+      | "priority"
+      | "status"
+      | "created"
+      | "modified";
+    orderDirection: "asc" | "desc";
+    status: String_of<StatusType[]> | null;
+    priority: String_of<PriorityType[]> | null;
+    query: string | null;
+  }>`SELECT * FROM filter_state`,
 
   issueDescription: S.sql<{
     id: ID_of<Issue>;

@@ -2,13 +2,12 @@ import { type CSSProperties } from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import IssueRow from "./IssueRow";
 import { Issue } from "../../domain/SchemaType";
-import VirtualTable from "./VirtualTable";
+import OffsetVirtualTable from "./OffsetVirtualTable";
 
 export const ROW_HEIGHT = 36;
 export interface IssueListProps {
   issues: readonly Issue[];
-  onNextPage: () => void;
-  onPrevPage: () => void;
+  onPage: (topIdx: number) => void;
   hasNextPage: boolean;
   hasPrevPage: boolean;
   loading: boolean;
@@ -18,8 +17,7 @@ export interface IssueListProps {
 
 function IssueList({
   issues,
-  onNextPage,
-  onPrevPage,
+  onPage,
   hasNextPage,
   hasPrevPage,
   loading,
@@ -30,7 +28,7 @@ function IssueList({
     <div className="grow">
       <AutoSizer>
         {({ height, width }: { width: number; height: number }) => (
-          <VirtualTable
+          <OffsetVirtualTable
             rowRenderer={rowRenderer}
             width={width}
             height={height}
@@ -38,8 +36,7 @@ function IssueList({
             rows={issues}
             totalRows={totalRows}
             startIndex={startIndex}
-            onNextPage={onNextPage}
-            onPrevPage={onPrevPage}
+            onPage={onPage}
             hasNextPage={hasNextPage}
             hasPrevPage={hasPrevPage}
             loading={loading}
