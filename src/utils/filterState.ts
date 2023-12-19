@@ -1,4 +1,4 @@
-import { DecodedFilterState, Issue } from "../domain/SchemaType";
+import { DecodedFilterState } from "../domain/SchemaType";
 
 export function filterStateToWhere(filterState: DecodedFilterState) {
   const { status, priority, query } = filterState;
@@ -20,6 +20,10 @@ export function filterStateToWhere(filterState: DecodedFilterState) {
       where += " AND ";
     }
     where += `TITLE LIKE '%${query}%'`;
+  }
+
+  if (where == orig) {
+    return "";
   }
 
   return where;

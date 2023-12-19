@@ -14,6 +14,7 @@ function List({ showSearch = false }) {
   // TODO: observe window height and update limit
   const pageSize = Math.floor(window.innerHeight / ROW_HEIGHT);
   const [indexOffset, setIndexOffset] = useState(0);
+  const [usedIndexOffset, setUsedIndexOffset] = useState(0);
   const limit = pageSize * 3;
   const issues$ = useQuery2(ctx, queries.listIssues(filterState), [
     indexOffset,
@@ -23,6 +24,12 @@ function List({ showSearch = false }) {
     first(useQuery2(ctx, queries.filteredIssueCount(filterState)).data)?.c ?? 0;
   const hasPrevPage = indexOffset > 0;
   const hasNextPage = filteredIssuesCount > indexOffset + issues$.data.length;
+  const [lastIssues, setLastIssues] = useState(issues$.data);
+
+  if (issues$.data !== lastIssues) {
+    setUsedIndexOffset(indexOffset);
+    setLastIssues(issues$.data);
+  }
 
   // topIdx is the offset into the entire result set
   function onPage(topIdx: number) {
@@ -44,7 +51,7 @@ function List({ showSearch = false }) {
         hasPrevPage={hasPrevPage}
         onPage={onPage}
         loading={issues$.loading}
-        startIndex={indexOffset}
+        startIndex={usedIndexOffset}
         totalRows={filteredIssuesCount}
       />
     </div>
