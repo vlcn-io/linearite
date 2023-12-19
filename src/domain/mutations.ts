@@ -1,5 +1,5 @@
 import { TXAsync } from "@vlcn.io/xplat-api"
-import { Issue, Description, Comment, StatusType } from "./SchemaType"
+import { Issue, Description, Comment, DecodedFilterState, encodeFilterState, StatusType } from "./SchemaType"
 import { ID_of } from "@vlcn.io/id"
 
 function colNames(obj: { [key: string]: unknown }) {
@@ -51,6 +51,15 @@ export const mutations = {
     return tx.exec(
       `INSERT INTO comment (${colNames(comment)}) VALUES (${placeholders(comment)})`,
       values(comment)
+    );
+  },
+
+  putFilterState(tx: TXAsync, filterState: DecodedFilterState) {
+    const encoded = encodeFilterState(filterState)
+    return tx.exec(
+      `INSERT INTO filter_state (${colNames(encoded)}) VALUES (${placeholders(encoded)})
+        ON CONFLICT DO UPDATE SET ${set(encoded)}`,
+      [...values(encoded), ...values(encoded)]
     );
   },
 

@@ -28,6 +28,8 @@ export const labels = [
 export const priorities = ["none", "low", "medium", "high", "urgent"];
 export const statuses = ["backlog", "todo", "in_progress", "done", "canceled"];
 
+let issueId = 0;
+
 export function* createIssues(numTasks) {
   const actionPhrases = [
     "Implement",
@@ -96,17 +98,21 @@ export function* createIssues(numTasks) {
     const [title, description] = generateText();
     const task = {
       id: nanoid(),
+      // id: ++issueId,
       creator: getRandomItem(names),
       title,
-      created: Date.now() - (i % 365 * 5) * 24 * 60 * 60 * 1000,
-      modified: Date.now() - (i % 365 * 2) * 24 * 60 * 60 * 1000,
+      created: Date.now() - i * 5 * 24 * 60 * 60 * 1000,
+      modified: Date.now() - i * 2 * 24 * 60 * 60 * 1000,
       status: getRandomItem(statuses),
       priority: getRandomItem(priorities),
       kanbanorder: 1,
     };
-    yield [task, {
-      id: task.id,
-      body: description,
-    }];
+    yield [
+      task,
+      {
+        id: task.id,
+        body: description,
+      },
+    ];
   }
 }

@@ -1,38 +1,38 @@
-import type { CSSProperties } from 'react'
-import PriorityMenu from '../../components/contextmenu/PriorityMenu'
-import StatusMenu from '../../components/contextmenu/StatusMenu'
-import PriorityIcon from '../../components/PriorityIcon'
-import StatusIcon from '../../components/StatusIcon'
-import Avatar from '../../components/Avatar'
-import { memo } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { formatDate } from '../../utils/date'
-import { Issue, PriorityType, StatusType } from '../../domain/SchemaType'
-import { useDB } from '@vlcn.io/react'
-import { DBName } from '../../domain/Schema'
-import { mutations } from '../../domain/mutations'
+import type { CSSProperties } from "react";
+import PriorityMenu from "../../components/contextmenu/PriorityMenu";
+import StatusMenu from "../../components/contextmenu/StatusMenu";
+import PriorityIcon from "../../components/PriorityIcon";
+import StatusIcon from "../../components/StatusIcon";
+import Avatar from "../../components/Avatar";
+import { memo } from "react";
+import { useNavigate } from "react-router-dom";
+import { formatDate } from "../../utils/date";
+import { Issue, PriorityType, StatusType } from "../../domain/SchemaType";
+import { useDB } from "@vlcn.io/react";
+import { DBName } from "../../domain/Schema";
+import { mutations } from "../../domain/mutations";
 
 interface Props {
-  issue: Issue
-  style: CSSProperties
+  issue: Issue;
+  style: CSSProperties;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 function IssueRow({ issue, style }: Props) {
-  const navigate = useNavigate()
-  const ctx = useDB(DBName)
+  const navigate = useNavigate();
+  const ctx = useDB(DBName);
 
-  const handleChangeStatus = (status: StatusType) => 
+  const handleChangeStatus = (status: StatusType) =>
     mutations.updateIssue(ctx.db, {
       id: issue.id,
       status,
-    })
+    });
 
   const handleChangePriority = (priority: PriorityType) =>
     mutations.updateIssue(ctx.db, {
       id: issue.id,
       priority,
-    })
+    });
 
   return (
     <div
@@ -44,20 +44,20 @@ function IssueRow({ issue, style }: Props) {
     >
       <div className="flex-shrink-0 ml-4">
         <PriorityMenu
-          id={'r-priority-' + issue.id}
+          id={"r-priority-" + issue.id}
           button={<PriorityIcon priority={issue.priority} />}
           onSelect={handleChangePriority}
         />
       </div>
       <div className="flex-shrink-0 ml-3">
         <StatusMenu
-          id={'r-status-' + issue.id}
+          id={"r-status-" + issue.id}
           button={<StatusIcon status={issue.status} />}
           onSelect={handleChangeStatus}
         />
       </div>
       <div className="flex-wrap flex-shrink ml-3 overflow-hidden font-medium line-clamp-1 overflow-ellipsis">
-        {issue.title.slice(0, 3000) || ''}
+        {issue.title.slice(0, 3000) || ""}
       </div>
       <div className="flex-shrink-0 hidden w-15 ml-auto font-normal text-gray-500 sm:block whitespace-nowrap">
         {formatDate(new Date(issue.created))}
@@ -66,8 +66,8 @@ function IssueRow({ issue, style }: Props) {
         <Avatar name={issue.creator} />
       </div>
     </div>
-  )
+  );
 }
 
-const memoed = memo(IssueRow)
-export default memoed
+const memoed = memo(IssueRow);
+export default memoed;

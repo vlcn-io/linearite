@@ -32,6 +32,7 @@ export default function IssueBoard({ issues }: IssueBoardProps) {
     setMovedIssues({})
   }, [issues])
 
+  // TODO: do this in the db itself. not here. Then we can page correctly.
   const { issuesByStatus } = useMemo(() => {
     const issuesByStatus: Partial<Record<StatusType, Issue[]>> = {}
     issues.forEach((issue) => {
